@@ -9,14 +9,17 @@ const SignUpButton = props => (
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white'
+        backgroundColor: "#DDDDDD"
     },
     text: {
         fontSize: 20,
         paddingHorizontal: 10,
         paddingVertical: 8,
         borderRadius: 5,
-        color: 'white',
-        textAlign: 'center'
+        color: 'black',
+        textAlign: 'center',
+        borderColor: 'black'
     }
 })
+
+export default SignUpButton
