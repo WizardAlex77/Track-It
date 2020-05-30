@@ -30,7 +30,7 @@ class SignUpContainer extends React.Component {
 
     render() {
         return (
-            <KeyboardAvoidingView behaviour="padding" style={styles.container}>
+            <KeyboardAvoidingView behavior="padding" style={styles.container}>
                 <Image style={styles.image} source={require('../assets/logo.png')} />
                 <TextInput
                     style={styles.textInput}

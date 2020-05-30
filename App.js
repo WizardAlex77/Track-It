@@ -6,7 +6,7 @@ import UserListContainer from "./container/UserList";
 export default function App() {
   return (
     <View style={styles.container}>
-      <UserListContainer />
+      <SignUpContainer />
     </View>
   );
 }
