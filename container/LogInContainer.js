@@ -26,8 +26,8 @@ class LogInContainer extends Component {
                 else {
                     console.log('Logging In');
                     this.setState({
-                            name: '',
-                            password: ''
+                        name: '',
+                        password: ''
                     });
                     this.props.navigation.navigate('Home');
                 }})
@@ -38,67 +38,66 @@ class LogInContainer extends Component {
     render() {
         return (
             <SafeAreaView style={{flex: 1}}>
-            <TouchableWithoutFeedback onPress={() => {
-                Keyboard.dismiss();
-                console.log('dismissed keyboard');
-            }}>
-                <KeyboardAvoidingView behavior="padding" style={styles.container}>
-                    <ScrollView contentContainerStyle={{
-                        flex: 1
-                    }}>
-                    <View style={styles.logoContainer}>
-                        <Image
-                            style={styles.logo}
-                            source={require('../assets/logo.png')}
-                            />
-                        <View style={styles.inputContainer}>
-                            <TextInput
-                                placeholder="Username"
-                                style={styles.input}
-                                onChangeText={this.handleUpdateName}
-                                value={this.state.name}
-                                returnKeyType="next"
-                                onSubmitEditing={() => this.passwordInput.focus()}
-                            />
-                            <TextInput
-                                placeholder="Password"
-                                style={[styles.input, {marginBottom: 25}]}
-                                onChangeText={this.handleUpdatePassword}
-                                value={this.state.password}
-                                ref={(input) => this.passwordInput = input}
-                                returnKeyType="go"
-                                secureTextEntry
-                            />
-                            <Button
-                                onPress={() => {
+                <TouchableWithoutFeedback onPress={() => {
+                    Keyboard.dismiss();
+                    console.log('dismissed keyboard');
+                }}>
+                    <KeyboardAvoidingView behavior="padding" style={styles.container}>
+                        <ScrollView contentContainerStyle={{
+                            flex: 1
+                        }}>
+                        <View style={styles.logoContainer}>
+                            <Image
+                                style={styles.logo}
+                                source={require('../assets/logo.png')}
+                                />
+                            <View style={styles.inputContainer}>
+                                <TextInput
+                                    placeholder="Username"
+                                    style={styles.input}
+                                    onChangeText={this.handleUpdateName}
+                                    value={this.state.name}
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => this.refs.passwordInput.focus()}
+                                />
+                                <TextInput
+                                    placeholder="Password"
+                                    style={[styles.input, {marginBottom: 25}]}
+                                    onChangeText={this.handleUpdatePassword}
+                                    value={this.state.password}
+                                    ref={"passwordInput"}
+                                    returnKeyType="go"
+                                    secureTextEntry
+                                />
+                                <Button
+                                    onPress={() => {
+                                        Keyboard.dismiss();
+                                        if (
+                                            this.state.name.length &&
+                                            this.state.password.length
+                                        ) {
+                                            this.handleSignIn(this.state.name, this.state.password);
+                                        } else {
+                                            alert('Please enter username and password');
+                                        }
+                                    }}
+                                >
+                                    <Text>Log In</Text>
+                                </Button>
+                                <Button onPress={() => {
                                     Keyboard.dismiss();
-                                    if (
-                                        this.state.name.length &&
-                                        this.state.password.length
-                                    ) {
-                                        this.handleSignIn(this.state.name, this.state.password);
-                                    } else {
-                                        alert('Please enter username and password');
-                                    }
+                                    this.props.navigation.navigate('Sign Up');
                                 }}
-                            >
-                                <Text>Log In</Text>
-                            </Button>
-                            <Button onPress={() => {
-                                Keyboard.dismiss();
-                                this.props.navigation.navigate('Sign Up');
-                            }}
-                            >
-                                <Text>Sign Up</Text>
-                            </Button>
+                                >
+                                    <Text>Sign Up</Text>
+                                </Button>
+                            </View>
                         </View>
-                    </View>
-                    </ScrollView>
-                </KeyboardAvoidingView>
-            </TouchableWithoutFeedback>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+                </TouchableWithoutFeedback>
             </SafeAreaView>
-    )
-    };
+    )};
 }
 
 const styles = StyleSheet.create({

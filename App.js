@@ -4,6 +4,7 @@ import SignUpContainer from './container/SignUpContainer';
 import UserListContainer from "./container/UserList";
 import LogInContainer from "./container/LogInContainer";
 import HomeContainer from "./container/HomeContainer";
+import WelcomeContainer from "./container/WelcomeContainer";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -22,6 +23,7 @@ export default function App() {
               headerShown: false
             }}
         >
+            <Stack.Screen name="Welcome" component={WelcomeContainer} />
           <Stack.Screen name="Log In" component={LogInContainer} />
           <Stack.Screen name="Sign Up" component={SignUpContainer} />
           <Stack.Screen name="Home" component={HomeContainer} />
