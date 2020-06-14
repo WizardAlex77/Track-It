@@ -5,6 +5,8 @@ Developed for Orbital 2020.
 
 Current Stage: User Login and Authentication
 
+14 June: See password feature implemented and UI updates
+
 ## Testing
 
 To test the app, download the Expo Client app on the Play store or App store. 
