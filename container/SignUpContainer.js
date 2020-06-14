@@ -11,10 +11,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
+  BackHandler,
+  TouchableOpacity,
 } from "react-native";
+import BackArrow from "../component/BackArrow";
 import Button from "../component/Button";
 import firebaseDb from "../firebaseDb";
 import PasswordTextBox from "../component/PasswordTextBox";
+import Icons from "react-native-vector-icons/MaterialIcons";
 
 class SignUpContainer extends React.Component {
   state = {
@@ -77,6 +81,11 @@ class SignUpContainer extends React.Component {
     }
   };
 
+  handleBackButtonClick = () => {
+    Keyboard.dismiss();
+    this.props.navigation.goBack();
+  };
+
   render() {
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -92,8 +101,20 @@ class SignUpContainer extends React.Component {
                 flex: 1,
               }}
             >
+              <View>
+                <TouchableOpacity onPress={this.handleBackButtonClick}>
+                  <Icons
+                    name={"arrow-back"}
+                    size={30}
+                    color="black"
+                    style={{ marginLeft: "3%", marginTop: "16%" }}
+                  />
+                </TouchableOpacity>
+              </View>
               <View style={styles.logoContainer}>
-                <Text style={{ fontSize: 35, padding: 20, fontWeight: "bold" }}>
+                <Text
+                  style={{ fontSize: 35, padding: "5%", fontWeight: "bold" }}
+                >
                   Let's get started!
                 </Text>
                 <Text>Create an account to use our features</Text>
@@ -141,14 +162,6 @@ class SignUpContainer extends React.Component {
                     style={styles.buttonContainer}
                   >
                     <Text>Register</Text>
-                  </Button>
-                  <Button
-                    onPress={() => {
-                      Keyboard.dismiss();
-                      this.props.navigation.goBack();
-                    }}
-                  >
-                    <Text>Back</Text>
                   </Button>
                 </View>
               </View>
