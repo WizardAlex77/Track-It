@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-    StyleSheet,
-    View,
-    Image
-} from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 
 class WelcomeContainer extends React.Component {
     componentDidMount(){

@@ -26,8 +26,16 @@ class LogInContainer extends Component {
   handleUpdateName = (name) => this.setState({ name });
   handleUpdateEmail = (email) => this.setState({ email });
   handleUpdatePassword = (password) => this.setState({ password });
-  handleSignIn = (name, password) =>
-    firebaseDb
+  handleSignIn = (email, password) =>
+    firebaseDb.auth()
+        .signInWithEmailAndPassword(email, password)
+        .then( (value) => {
+              this.props.navigation.navigate("Main");
+            }
+        )
+        .catch((err) => alert("No Such Account"));
+  /*
+      firebaseDb
       .firestore()
       .collection("users")
       .where("name", "==", name)
@@ -48,7 +56,7 @@ class LogInContainer extends Component {
       })
       .catch((err) => {
         console.log("Error getting documents", err);
-      });
+      }); */
 
   render() {
     return (

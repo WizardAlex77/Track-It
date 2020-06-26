@@ -20,6 +20,7 @@ import firebaseDb from "../firebaseDb";
 import PasswordTextBox from "../component/PasswordTextBox";
 import Icons from "react-native-vector-icons/MaterialIcons";
 
+
 class SignUpContainer extends React.Component {
   state = {
     name: "",
@@ -33,7 +34,14 @@ class SignUpContainer extends React.Component {
   handleUpdatePassword = (password) => this.setState({ password });
   handleUpdatePassword2 = (password2) => this.setState({ password2 });
   handleCreateUser = () => {
-    firebaseDb
+    firebaseDb.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then((userInfo) => {
+          userInfo.user.updateProfile({displayName: this.state.name}).then( () => {console.log(userInfo);});
+        })
+    this.props.navigation.navigate("Main");
+  }
+
+   /* firebaseDb
       .firestore()
       .collection("users")
       .add({
@@ -51,7 +59,7 @@ class SignUpContainer extends React.Component {
         this.props.navigation.navigate("Home");
       })
       .catch((err) => console.error(err));
-  };
+  }; */
 
   handleRegister = () => {
     Keyboard.dismiss();
@@ -101,16 +109,6 @@ class SignUpContainer extends React.Component {
                 flex: 1,
               }}
             >
-              <View>
-                <TouchableOpacity onPress={this.handleBackButtonClick}>
-                  <Icons
-                    name={"arrow-back"}
-                    size={30}
-                    color="black"
-                    style={{ marginLeft: "3%", marginTop: "16%" }}
-                  />
-                </TouchableOpacity>
-              </View>
               <View style={styles.logoContainer}>
                 <Text
                   style={{ fontSize: 35, padding: "5%", fontWeight: "bold" }}
@@ -205,6 +203,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderColor: "gray",
     borderWidth: 1,
+    marginVertical: 100,
   },
   buttonContainer: {
     backgroundColor: "#2980b9",

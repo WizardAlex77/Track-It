@@ -1,38 +1,15 @@
 import React, {Component} from 'react';
-import { StyleSheet, View, TextInput, Text, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback} from 'react-native';
+import { StyleSheet, View, TextInput, Text, Button} from 'react-native';
 import firebaseDb from "../firebaseDb";
-import Button from '../component/Button';
 
-class HomeContainer extends Component {
-
+export default class Home extends Component {
+    user = firebaseDb.auth().currentUser;
     render() {
         return (
-            <View style={styles.container}>
-                <Text style={styles.text}>Welcome!</Text>
-                <Button onPress={() => {
-                    Keyboard.dismiss();
-                    this.props.navigation.navigate('Log In');
-                }}
-                >
-                    <Text>Back</Text>
-                </Button>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>{this.user.displayName}</Text>
             </View>
-
-        )
+        );
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    text: {
-        alignSelf: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
-})
-
-export default HomeContainer
