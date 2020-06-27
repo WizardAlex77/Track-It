@@ -12,6 +12,7 @@ import WelcomeContainer from "./container/WelcomeContainer";
 import HomeContainer from "./container/HomeContainer";
 import SignUpContainer from "./container/SignUpContainer";
 import LogInContainer from "./container/LogInContainer";
+import firebaseDb from "./firebaseDb";
 
 if (!global.btoa) {
   global.btoa = encode;
@@ -19,6 +20,8 @@ if (!global.btoa) {
 if (!global.atob) {
   global.atob = decode;
 }
+
+firebaseDb.firestore().settings({ experimentalForceLongPolling: true });
 
 const AccountStack = createStackNavigator();
 const MenuTab = createBottomTabNavigator();
