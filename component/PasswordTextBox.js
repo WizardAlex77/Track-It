@@ -17,7 +17,7 @@ class PasswordTextBox extends React.Component {
   render() {
     const { label, icon, onChange } = this.props;
     return (
-      <Item floatingLabel>
+      <Item floatingLabel style={{width: 250, marginVertical: 10, alignSelf: 'center'}}>
         <Icon active name={icon} />
         <Label>{label}</Label>
         <Input

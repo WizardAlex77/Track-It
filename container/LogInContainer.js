@@ -30,6 +30,10 @@ class LogInContainer extends Component {
     firebaseDb.auth()
         .signInWithEmailAndPassword(email, password)
         .then( (value) => {
+              this.setState({
+                name: "",
+                password: ""
+              });
               this.props.navigation.navigate("Main");
             }
         )
@@ -98,7 +102,7 @@ class LogInContainer extends Component {
                     returnKeyType="go"
                   />
                   <Button
-                    style={styles.buttonContainer}
+                    style={[styles.buttonContainer, {width: 250, marginVertical: 10, alignSelf: 'center'}]}
                     onPress={() => {
                       Keyboard.dismiss();
                       if (
@@ -114,6 +118,7 @@ class LogInContainer extends Component {
                     <Text>Log In</Text>
                   </Button>
                   <Button
+                      style={[styles.buttonContainer, {width: 250, marginVertical: 10, alignSelf: 'center'}]}
                     onPress={() => {
                       Keyboard.dismiss();
                       this.props.navigation.navigate("Sign Up");
@@ -130,11 +135,10 @@ class LogInContainer extends Component {
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
@@ -148,6 +152,7 @@ const styles = StyleSheet.create({
     width: 270,
     height: 110,
     resizeMode: "contain",
+
   },
   inputContainer: {
     width: 360,
@@ -156,13 +161,14 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: 270,
+    width: 250,
     backgroundColor: "#d7dedc",
     marginBottom: 8,
     color: "black",
     paddingHorizontal: 10,
     borderColor: "gray",
     borderWidth: 1,
+
   },
   buttonContainer: {
     backgroundColor: "#2980b9",
@@ -176,5 +182,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
+
 
 export default LogInContainer;
