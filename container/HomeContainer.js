@@ -1,8 +1,17 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Alert, Text, ActivityIndicator, FlatList, Image } from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Alert,
+    Text,
+    ActivityIndicator,
+    FlatList,
+    Image,
+    TouchableOpacity,
+    KeyboardAvoidingView
+} from 'react-native';
 import firebaseDb from "../firebaseDb";
 import Icon from "react-native-vector-icons/Ionicons";
-import Button from "../component/Button";
 
 export default class Home extends Component {
     state = {
@@ -13,7 +22,6 @@ export default class Home extends Component {
 
     componentDidMount() {
         firebaseDb.firestore().collection('items')
-            .where("owner", "==", firebaseDb.auth().currentUser.displayName)
             .get()
             .then((querySnapshot) => {
                 const results = [];
@@ -35,8 +43,10 @@ export default class Home extends Component {
                              <Text style={styles.name}>{item.name}</Text>
                              <Text style={styles.locationStamp}> <Text>Location: </Text> {item.location}</Text>
                          </View>
+                         <TouchableOpacity onPress={() => Alert.alert(item.name,"Owner: " + item.owner + "\nQuantity: " + item.quantity)}>
+                             <Icon name="ios-more" size={24} color="#73788B" />
+                         </TouchableOpacity>
 
-                         <Icon name="ios-more" size={24} color="#73788B" />
                      </View>
                  </View>
             </View>

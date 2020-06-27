@@ -15,14 +15,16 @@ class PasswordTextBox extends React.Component {
   }
 
   render() {
-    const { label, icon, onChange } = this.props;
+    const { label, icon, onChange, style, returnKeyType, value } = this.props;
     return (
-      <Item floatingLabel style={{width: 250, marginVertical: 10, alignSelf: 'center'}}>
+      <Item floatingLabel style={style}>
         <Icon active name={icon} />
         <Label>{label}</Label>
         <Input
           secureTextEntry={this.state.password}
           onChangeText={(e) => onChange(e)}
+          returnKeyType={returnKeyType}
+          value={value}
         />
         <Icon name={this.state.icon} onPress={() => this._changeIcon()} />
       </Item>

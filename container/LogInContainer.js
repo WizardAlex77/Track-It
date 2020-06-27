@@ -15,7 +15,7 @@ import firebaseDb from "../firebaseDb";
 import Button from "../component/Button";
 import PasswordTextBox from "../component/PasswordTextBox";
 import TextBox from "../component/TextBox";
-import { Item } from "native-base";
+import {Icon, Input, Item, Label} from "native-base";
 
 class LogInContainer extends Component {
   state = {
@@ -64,77 +64,107 @@ class LogInContainer extends Component {
 
   render() {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            Keyboard.dismiss();
-            console.log("dismissed keyboard");
-          }}
-        >
+        <SafeAreaView>
+          <ScrollView>
           <KeyboardAvoidingView behavior="padding" style={styles.container}>
-            <ScrollView
-              contentContainerStyle={{
-                flex: 1,
-              }}
-            >
-              <View style={styles.logoContainer}>
-                <Image
-                  style={styles.logo}
-                  source={require("../assets/logo.png")}
-                />
-                <View style={styles.inputContainer}>
-                  <TextBox
-                    icon="person"
-                    label="Username"
-                    style={(styles.input, { marginBottom: 25, padding: 10 })}
-                    onChange={this.handleUpdateName}
+            <Image
+              style={styles.logo}
+              source={require("../assets/logo.png")}
+            />
+
+            <View style={styles.form}>
+
+              <Item floatingLabel style={styles.input}>
+                <Icon active name="mail" />
+                <Label>Email</Label>
+                <Input
+                    onChangeText={this.handleUpdateName}
                     value={this.state.name}
-                    returnKeyType="next"
-                    onSubmitEditing={() => this.refs.passwordInput.focus()}
-                  />
-                  <PasswordTextBox
-                    icon="lock"
-                    label="Password"
-                    onChange={this.handleUpdatePassword}
-                    value={this.state.password}
-                    style={[styles.input, { marginBottom: 25, padding: 10 }]}
-                    ref={"passwordInput"}
-                    returnKeyType="go"
-                  />
-                  <Button
-                    style={[styles.buttonContainer, {width: 250, marginVertical: 10, alignSelf: 'center'}]}
-                    onPress={() => {
-                      Keyboard.dismiss();
-                      if (
-                        this.state.name.length &&
-                        this.state.password.length
-                      ) {
-                        this.handleSignIn(this.state.name, this.state.password);
-                      } else {
-                        alert("Please enter username and password");
-                      }
-                    }}
-                  >
-                    <Text>Log In</Text>
-                  </Button>
-                  <Button
-                      style={[styles.buttonContainer, {width: 250, marginVertical: 10, alignSelf: 'center'}]}
-                    onPress={() => {
-                      Keyboard.dismiss();
-                      this.props.navigation.navigate("Sign Up");
-                    }}
-                  >
-                    <Text>Sign Up</Text>
-                  </Button>
-                </View>
-              </View>
-            </ScrollView>
+                />
+              </Item>
+
+              <PasswordTextBox
+                icon="lock"
+                label="Password"
+                onChange={this.handleUpdatePassword}
+                value={this.state.password}
+                style={[styles.input, {marginBottom: 30}]}
+                returnKeyType="go"
+              />
+
+              <Button
+                  style={styles.button}
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    if (
+                      this.state.name.length &&
+                      this.state.password.length
+                    ) {
+                      this.handleSignIn(this.state.name, this.state.password);
+                    } else {
+                      alert("Please enter username and password");
+                    }
+                  }}
+              >
+                <Text>Log In</Text>
+              </Button>
+
+              <Button
+                  style={styles.button}
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    this.props.navigation.navigate("Sign Up");
+                  }}
+              >
+                <Text>Sign Up</Text>
+              </Button>
+
+            </View>
           </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
-      </SafeAreaView>
+          </ScrollView>
+        </SafeAreaView>
     );
   }
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  greeting: {
+    marginTop: 32,
+    fontSize: 18,
+    fontWeight: "400",
+    textAlign: 'center'
+  },
+  form: {
+    marginBottom: 48,
+    marginHorizontal: 30
+  },
+  logo: {
+    marginTop: "20%",
+    width: 270,
+    height: 110,
+    resizeMode: "contain",
+    alignSelf: 'center'
+  },
+  input: {
+    height: 75,
+    fontSize: 15,
+    color: "#161F3D",
+    marginTop: 14
+  },
+  button: {
+    marginHorizontal: 30,
+    backgroundColor: "#E9446A",
+    borderRadius: 4,
+    height: 52,
+    alignItems: "center",
+    justifyContent: "center"
+  }
+})
+/*
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -152,7 +182,6 @@ const styles = StyleSheet.create({
     width: 270,
     height: 110,
     resizeMode: "contain",
-
   },
   inputContainer: {
     width: 360,
@@ -182,6 +211,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
-
+*/
 
 export default LogInContainer;

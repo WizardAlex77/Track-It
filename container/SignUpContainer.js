@@ -18,7 +18,7 @@ import BackArrow from "../component/BackArrow";
 import Button from "../component/Button";
 import firebaseDb from "../firebaseDb";
 import PasswordTextBox from "../component/PasswordTextBox";
-import Icons from "react-native-vector-icons/MaterialIcons";
+import {Icon, Input, Item, Label} from "native-base";
 
 
 class SignUpContainer extends React.Component {
@@ -96,81 +96,128 @@ class SignUpContainer extends React.Component {
 
   render() {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            Keyboard.dismiss();
-            console.log("dismissed keyboard");
-          }}
-        >
+
+        <SafeAreaView>
+        <ScrollView>
           <KeyboardAvoidingView behavior="padding" style={styles.container}>
-            <ScrollView
-              contentContainerStyle={{
-                flex: 1,
-              }}
-            >
-              <View style={styles.logoContainer}>
+
+            <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
+              <Icon name="ios-arrow-round-back" size={32} color="#FFF" />
+            </TouchableOpacity>
+
+            <View style={styles.greeting}>
                 <Text
                   style={{ fontSize: 35, padding: "5%", fontWeight: "bold" }}
                 >
                   Let's get started!
                 </Text>
                 <Text>Create an account to use our features</Text>
-                <View style={styles.inputContainer}>
-                  <TextBox
-                    icon="person"
-                    label="Username"
-                    style={(styles.input, { marginBottom: 25, padding: 10 })}
-                    onChange={this.handleUpdateName}
+            </View>
+
+            <View style={styles.form}>
+              <Item floatingLabel style={styles.input}>
+                <Icon active name="person" />
+                <Label>Username</Label>
+                <Input
+                    onChangeText={this.handleUpdateName}
                     value={this.state.name}
-                    returnKeyType="next"
-                    onSubmitEditing={() => this.emailInput.focus()}
-                  />
-                  <TextBox
-                    icon="mail"
-                    label="Email"
-                    style={(styles.input, { marginBottom: 25, padding: 10 })}
+                />
+              </Item>
+              <Item floatingLabel style={styles.input}>
+                <Icon active name="mail" />
+                <Label>Email</Label>
+                <Input
                     onChange={this.handleUpdateEmail}
                     value={this.state.email}
-                    returnKeyType="next"
-                    onSubmitEditing={() => this.firstPasswordInput.focus()}
                     keyboardType="email-address"
-                  />
-                  <PasswordTextBox
-                    icon="lock"
-                    label="Password"
-                    onChange={this.handleUpdatePassword}
-                    value={this.state.password}
-                    returnKeyType="next"
-                    style={[styles.input, { marginBottom: 25, padding: 10 }]}
-                    ref={(input) => (this.firstPasswordInput = input)}
-                    onSubmitEditing={() => this.secondPasswordInput.focus()}
-                  />
-                  <PasswordTextBox
-                    icon="lock"
-                    label="Re-enter Password"
-                    onChange={this.handleUpdatePassword2}
-                    value={this.state.password2}
-                    returnKeyType="go"
-                    style={[styles.input, { marginBottom: 25, padding: 10 }]}
-                    ref={(input) => (this.secondPasswordInput = input)}
-                  />
-                  <Button
-                    onPress={this.handleRegister}
-                    style={styles.buttonContainer}
-                  >
-                    <Text>Register</Text>
-                  </Button>
-                </View>
-              </View>
-            </ScrollView>
+                />
+              </Item>
+              <PasswordTextBox
+                icon="lock"
+                label="Password"
+                onChange={this.handleUpdatePassword}
+                value={this.state.password}
+                returnKeyType="next"
+                style={styles.input}
+              />
+              <PasswordTextBox
+                icon="lock"
+                label="Re-enter Password"
+                onChange={this.handleUpdatePassword2}
+                value={this.state.password2}
+                returnKeyType="go"
+                style={[styles.input, {marginBottom: 30}]}
+              />
+              <Button
+                  style={styles.button}
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    this.handleRegister();
+                  }}
+              >
+                <Text>Sign Up</Text>
+              </Button>
+
+            </View>
           </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
-      </SafeAreaView>
+          </ScrollView>
+        </SafeAreaView>
     );
   }
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  greeting: {
+    position: 'absolute',
+    top: 70,
+    alignItems: 'center',
+    width: "100%"
+  },
+  form: {
+    marginBottom: 48,
+    marginHorizontal: 30,
+    marginTop: "50%"
+  },
+  logo: {
+    marginTop: "20%",
+    width: 270,
+    height: 110,
+    resizeMode: "contain",
+    alignSelf: 'center'
+  },
+  input: {
+    marginHorizontal: 30,
+    marginLeft: 30,
+    height: 75,
+    fontSize: 15,
+    color: "#161F3D",
+    marginTop: 14
+  },
+  button: {
+    marginHorizontal: 30,
+    backgroundColor: "#E9446A",
+    borderRadius: 4,
+    height: 52,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  back: {
+    position: "absolute",
+    top: 48,
+    left: 32,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(21,22,48,0.1)",
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+})
+
+/*
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -216,6 +263,6 @@ const styles = StyleSheet.create({
     color: "red",
     marginTop: 48,
   },
-});
+}); */
 
 export default SignUpContainer;

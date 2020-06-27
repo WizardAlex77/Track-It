@@ -13,6 +13,7 @@ import HomeContainer from "./container/HomeContainer";
 import SignUpContainer from "./container/SignUpContainer";
 import LogInContainer from "./container/LogInContainer";
 import firebaseDb from "./firebaseDb";
+import InventoryContainer from "./container/InventoryContainer";
 
 if (!global.btoa) {
   global.btoa = encode;
@@ -48,7 +49,7 @@ export default function App() {
             />
             <MenuTab.Screen
                 name="Inventory"
-                component={HomeContainer}
+                component={InventoryContainer}
                 options={{
                     tabBarLabel: 'Inventory',
                     tabBarIcon: ({color, size}) => (
