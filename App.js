@@ -5,15 +5,17 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { decode, encode } from "base-64";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
-import AddButton from "./component/AddButton";
+import AddItemContainer from "./container/AddItemContainer";
 import WishListContainer from "./container/WishListContainer";
-import HouseHoldListContainer from "./container/HouseHoldListContainer";
+import SettingsContainer from "./container/SettingsContainer";
 import WelcomeContainer from "./container/WelcomeContainer";
 import HomeContainer from "./container/HomeContainer";
 import SignUpContainer from "./container/SignUpContainer";
 import LogInContainer from "./container/LogInContainer";
 import firebaseDb from "./firebaseDb";
 import InventoryContainer from "./container/InventoryContainer";
+import AddToInventoryContainer from "./container/AddToInventoryContainer"
+import AddToWishListContainer from "./container/AddToWishListContainer"
 
 if (!global.btoa) {
   global.btoa = encode;
@@ -26,9 +28,47 @@ firebaseDb.firestore().settings({ experimentalForceLongPolling: true });
 
 const AccountStack = createStackNavigator();
 const MenuTab = createBottomTabNavigator();
+const SettingStack = createStackNavigator();
+const AddItemStack = createStackNavigator();
 
 export default function App() {
-  const createBottomTab = () => {
+    const createSettingStack = () => {
+        return (
+            <SettingStack.Navigator initialRouteName="Settings">
+                <SettingStack.Screen
+                    name="Settings"
+                    component={SettingsContainer}
+                    options={{
+                        headerShown: false
+                    }}
+                />
+            </SettingStack.Navigator>
+        )
+    }
+
+    const createAddItemStack = () => {
+        return (
+            <AddItemStack.Navigator
+                initialRouteName="Add Item Selection"
+                headerMode="none"
+            >
+                <AddItemStack.Screen
+                    name="Add Item Selection"
+                    component={AddItemContainer}
+                />
+                <AddItemStack.Screen
+                    name="Add Item to Inventory"
+                    component={AddToInventoryContainer}
+                />
+                <AddItemStack.Screen
+                    name="Add Item to WishList"
+                    component={AddToWishListContainer}
+                />
+            </AddItemStack.Navigator>
+        )
+    }
+
+    const createBottomTab = () => {
     return (
       <MenuTab.Navigator
         initialRouteName="Home"
@@ -58,11 +98,11 @@ export default function App() {
           }}
         />
         <MenuTab.Screen
-          name="A"
-          component={AddButton}
+          name="Add Item"
+          children={createAddItemStack}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Icon name="ios-add-circle" color="red" size={size} />
+              <Icon name="ios-add-circle" color="red" size="40" />
             ),
           }}
         />
@@ -78,7 +118,7 @@ export default function App() {
         />
         <MenuTab.Screen
           name="HouseHold"
-          component={HouseHoldListContainer}
+          children={createSettingStack}
           options={{
             tabBarLabel: "HouseHold",
             tabBarIcon: ({ color, size }) => (

@@ -102,7 +102,7 @@ export default class InventoryContainer extends Component {
         autoCorrect={false}
         onPressFocus
         autoFocus={false}
-        onPress={() => alert("onPress")}
+        onPress={() => {}}
       />
     );
   };

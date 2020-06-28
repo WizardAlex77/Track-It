@@ -68,7 +68,7 @@ export default class Home extends Component {
         onPressCancel={() => { this.searchFilterFunction("") }}
         onPressFocus
         autoFocus={false}
-        onPress={() => alert("onPress")}
+        onPress={() => {}}
       />
     );
   };
@@ -150,10 +150,6 @@ export default class Home extends Component {
                     />
                     </View>; */
     }
-
-    // <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    //      <Text>{Username}</Text>
-    // </View>
   }
 }
 

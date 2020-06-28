@@ -1,23 +1,18 @@
 import React from "react";
-import TextBox from "../component/TextBox";
 import {
   StyleSheet,
   View,
-  Image,
-  TextInput,
   Text,
   KeyboardAvoidingView,
   ScrollView,
-  TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
-  BackHandler,
   TouchableOpacity,
 } from "react-native";
-import BackArrow from "../component/BackArrow";
 import Button from "../component/Button";
 import firebaseDb from "../firebaseDb";
 import PasswordTextBox from "../component/PasswordTextBox";
+import {StaticInput, StaticPasswordInput} from "../component/StaticInput";
 import {Icon, Input, Item, Label} from "native-base";
 
 
@@ -89,11 +84,6 @@ class SignUpContainer extends React.Component {
     }
   };
 
-  handleBackButtonClick = () => {
-    Keyboard.dismiss();
-    this.props.navigation.goBack();
-  };
-
   render() {
     return (
 
@@ -115,45 +105,16 @@ class SignUpContainer extends React.Component {
             </View>
 
             <View style={styles.form}>
-              <Item floatingLabel style={styles.input}>
-                <Icon active name="person" />
-                <Label>Username</Label>
-                <Input
-                    onChangeText={this.handleUpdateName}
-                    value={this.state.name}
-                />
-              </Item>
-              <Item floatingLabel style={styles.input}>
-                <Icon active name="mail" />
-                <Label>Email</Label>
-                <Input
-                    onChange={this.handleUpdateEmail}
-                    value={this.state.email}
-                    keyboardType="email-address"
-                />
-              </Item>
-              <PasswordTextBox
-                icon="lock"
-                label="Password"
-                onChange={this.handleUpdatePassword}
-                value={this.state.password}
-                returnKeyType="next"
-                style={styles.input}
-              />
-              <PasswordTextBox
-                icon="lock"
-                label="Re-enter Password"
-                onChange={this.handleUpdatePassword2}
-                value={this.state.password2}
-                returnKeyType="go"
-                style={[styles.input, {marginBottom: 30}]}
-              />
+              <StaticInput style={{marginTop: 32}} onChangeText={this.handleUpdateName} value={this.state.name}>Name</StaticInput>
+              <StaticInput style={{marginTop: 32}} onChangeText={this.handleUpdateEmail} value={this.state.email}>Email</StaticInput>
+              <StaticPasswordInput style={{marginTop: 32}} onChangeText={this.handleUpdatePassword} value={this.state.password}>Password</StaticPasswordInput>
+              <StaticPasswordInput style={{marginTop: 32, marginBottom: 30}} onChangeText={this.handleUpdatePassword2} value={this.state.password2}>Re-enter Password</StaticPasswordInput>
               <Button
                   style={styles.button}
                   onPress={() => {
                     Keyboard.dismiss();
                     this.handleRegister();
-                  }}
+                  }}s
               >
                 <Text>Sign Up</Text>
               </Button>
@@ -172,7 +133,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     position: 'absolute',
-    top: 70,
+    top: 50,
     alignItems: 'center',
     width: "100%"
   },
@@ -206,8 +167,8 @@ const styles = StyleSheet.create({
   },
   back: {
     position: "absolute",
-    top: 48,
-    left: 32,
+    top: 10,
+    left: 17,
     width: 32,
     height: 32,
     borderRadius: 16,
