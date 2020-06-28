@@ -28,80 +28,85 @@ const AccountStack = createStackNavigator();
 const MenuTab = createBottomTabNavigator();
 
 export default function App() {
-
-    const createBottomTab = () => {
-        return <MenuTab.Navigator
-            initialRouteName="Home"
-            tabBarOptions={{
-                activeTintColor: '#e91e63',
-                showLabel: false,
-            }}
-        >
-            <MenuTab.Screen
-                name="Home"
-                component={HomeContainer}
-                options={{
-                    tabBarLabel: 'Home',
-                    tabBarIcon: ({color, size}) => (
-                        <Icon name="ios-home" color={color} size={size}/>
-                    ),
-                }}
-            />
-            <MenuTab.Screen
-                name="Inventory"
-                component={InventoryContainer}
-                options={{
-                    tabBarLabel: 'Inventory',
-                    tabBarIcon: ({color, size}) => (
-                        <Icon name="ios-folder" color={color} size={size}/>
-                    ),
-                }}
-            />
-            <MenuTab.Screen
-                name="A"
-                component={AddButton}
-                options={{
-                    tabBarIcon: ({color, size}) => (
-                        <Icon name="ios-add-circle" color='red' size={size}/>
-                    ),
-                }}
-            />
-            <MenuTab.Screen
-                name="WishList"
-                component={WishListContainer}
-                options={{
-                    tabBarLabel: 'WishList',
-                    tabBarIcon: ({color, size}) => (
-                        <Icon name="ios-heart" color={color} size={size}/>
-                    ),
-                }}
-            />
-            <MenuTab.Screen
-                name="HouseHold"
-                component={HouseHoldListContainer}
-                options={{
-                    tabBarLabel: 'HouseHold',
-                    tabBarIcon: ({color, size}) => (
-                        <Icon name="ios-person" color={color} size={size}/>
-                    ),
-                }}
-            />
-        </MenuTab.Navigator>
-    }
-
+  const createBottomTab = () => {
     return (
-      <NavigationContainer>
-          <AccountStack.Navigator
-              screenOptions={{
-                  headerShown: false,
-              }}
-              initialRouteName="WelcomeSplash" >
-              <AccountStack.Screen name = "WelcomeSplash" component={WelcomeContainer}/>
-              <AccountStack.Screen name="Log In" component={LogInContainer}/>
-              <AccountStack.Screen name="Sign Up" component={SignUpContainer}/>
-              <AccountStack.Screen name="Main" children={createBottomTab}/>
-          </AccountStack.Navigator>
-      </NavigationContainer>
+      <MenuTab.Navigator
+        initialRouteName="Home"
+        tabBarOptions={{
+          activeTintColor: "#e91e63",
+          showLabel: false,
+        }}
+      >
+        <MenuTab.Screen
+          name="Home"
+          component={HomeContainer}
+          options={{
+            tabBarLabel: "Home",
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="ios-home" color={color} size={size} />
+            ),
+          }}
+        />
+        <MenuTab.Screen
+          name="Inventory"
+          component={InventoryContainer}
+          options={{
+            tabBarLabel: "Inventory",
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="ios-folder" color={color} size={size} />
+            ),
+          }}
+        />
+        <MenuTab.Screen
+          name="A"
+          component={AddButton}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="ios-add-circle" color="red" size={size} />
+            ),
+          }}
+        />
+        <MenuTab.Screen
+          name="WishList"
+          component={WishListContainer}
+          options={{
+            tabBarLabel: "WishList",
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="ios-heart" color={color} size={size} />
+            ),
+          }}
+        />
+        <MenuTab.Screen
+          name="HouseHold"
+          component={HouseHoldListContainer}
+          options={{
+            tabBarLabel: "HouseHold",
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="ios-person" color={color} size={size} />
+            ),
+          }}
+        />
+      </MenuTab.Navigator>
+    );
+  };
+
+  return (
+    <NavigationContainer>
+      <AccountStack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName="WelcomeSplash"
+      >
+        <AccountStack.Screen
+          name="WelcomeSplash"
+          component={WelcomeContainer}
+        />
+        <AccountStack.Screen name="Log In" component={LogInContainer} />
+        <AccountStack.Screen name="Sign Up" component={SignUpContainer} />
+        <AccountStack.Screen name="Main" children={createBottomTab} />
+      </AccountStack.Navigator>
+    </NavigationContainer>
   );
 }
 
