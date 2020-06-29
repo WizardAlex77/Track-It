@@ -3,13 +3,21 @@ import {
     StyleSheet,
     View,
     Text,
-    Keyboard, ScrollView, SafeAreaView, TouchableOpacity, KeyboardAvoidingView,
+    Keyboard, ScrollView, SafeAreaView, TouchableOpacity, Image,
 } from "react-native";
 import firebaseDb from "../firebaseDb";
 import TextBox from "../component/TextBox";
 import Button from "../component/Button";
 import {FieldInput} from "../component/StaticInput";
 import {Icon} from "native-base";
+import Constants from "expo-constants";
+import * as Permissions from "expo-permissions";
+import Fire from "../Fire";
+import * as ImagePicker from "expo-image-picker";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
+const firebase = require("firebase");
+require("firebase/firestore");
 
 export default class AddToInventoryContainer extends Component {
     state = {
@@ -17,8 +25,65 @@ export default class AddToInventoryContainer extends Component {
         type: "",
         location:"",
         quantity:"",
-        description:""
+        description:"",
+        image: null,
     };
+
+    componentDidMount() {
+        this.getPhotoPermission().then(r => {console.log("obtained permission to photo library")});
+    }
+
+    getPhotoPermission = async () => {
+        if (Constants.platform.ios) {
+            const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+            if (status != "granted") {
+                alert("We need permission to access your camera roll")
+            }
+        }
+    }
+
+    pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4,3]
+        });
+
+        if (!result.cancelled) {
+            this.setState({ image: result.uri });
+            console.log("image set to: " + this.state.image);
+        }
+    }
+
+    handleAddItem2 = () => {
+        Fire.shared.addItem({
+                name: this.state.name,
+                type: this.state.type,
+                location: this.state.location,
+                quantity: this.state.quantity,
+                description: this.state.description,
+                owner: firebaseDb.auth().currentUser.displayName,
+                localUri: this.state.image })
+            .then(ref => {
+                this.setState({
+                    name: "",
+                    type: "",
+                    location:"",
+                    quantity:"",
+                    description:"",
+                    image: null
+                });
+                this.props.navigation.navigate("Home");
+            })
+    }
+
+    displayDummy = () => {
+        return <Ionicons name='ios-add' size={70} color="#FFF" />
+    }
+    displayImage = () => {
+        return <Image source={{ uri: this.state.image }} style={styles.avatar} />
+    }
 
     handleUpdateName = (name) => this.setState({ name });
     handleUpdateType = (type) => this.setState({ type });
@@ -57,7 +122,12 @@ export default class AddToInventoryContainer extends Component {
                             <Icon name="ios-arrow-round-back" size={32} color="#FFF" />
                         </TouchableOpacity>
                         <View style={{marginTop: 20}}>
-                        <Text style={styles.greeting}>Add an Item!</Text></View>
+                            <Text style={styles.greeting}>Add an Item!</Text>
+                        </View>
+                        <TouchableOpacity style={[styles.avatarPlaceHolder, {alignSelf: 'center'}]} onPress={this.pickImage}>
+                            {this.state.image!=null && this.displayImage()}
+                            {this.state.image==null && this.displayDummy()}
+                        </TouchableOpacity>
                         <View style={styles.form}>
                             <FieldInput
                                 style={{marginTop: 20}}
@@ -88,7 +158,7 @@ export default class AddToInventoryContainer extends Component {
                                 style={styles.button}
                                 onPress={() => {
                                     Keyboard.dismiss();
-                                    this.handleAddItem();
+                                    this.handleAddItem2();
                                 }}
                             >
                                 <Text>Add Item</Text>
@@ -111,6 +181,21 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: 'center',
     },
+    avatarPlaceHolder :{
+        width: 100,
+        height: 100,
+        backgroundColor: "#E1E2E6",
+        borderRadius: 50,
+        marginTop: 20,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    avatar: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        position: 'absolute'
+    },
     form: {
         marginBottom: 48,
         marginHorizontal: 30
@@ -124,7 +209,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginHorizontal: 30,
-        backgroundColor: "#E9446A",
+        backgroundColor: "#e9446a",
         borderRadius: 4,
         height: 52,
         alignItems: "center",

@@ -14,6 +14,9 @@ import firebaseDb from "../firebaseDb";
 import Icon from "react-native-vector-icons/Ionicons";
 import SearchBar from "react-native-dynamic-search-bar";
 
+const firebase = require("firebase");
+require("firebase/firestore");
+
 export default class Home extends Component {
   state = {
     Username: "not done",
@@ -76,7 +79,7 @@ export default class Home extends Component {
   renderItem = (item) => {
     return (
       <View style={styles.feedItem}>
-        <Image source={require("../assets/logo.png")} style={styles.avatar} />
+        <Image source={{ uri: item.image }} style={styles.avatar} />
         <View style={{ flex: 1 }}>
           <View
             style={{
