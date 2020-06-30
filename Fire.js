@@ -7,17 +7,18 @@ class Fire {
     }
 
     updateProfilePic = async (user, email) => {
-        let remoteUri = await this.uploadPhotoAsync(user, 'avatars/${email}')
+        let remoteUri = await this.uploadPhotoAsync(user, `avatars/${this.uid}/${Date.now()}.jpg`)
         let db = this.firestore.collection("users").doc(email);
-        await db.set({ avatar: remoteUri }, { merge: true })
+        await db.set({ avatar: remoteUri }, { merge: true }).then(() => { console.log("pic uploaded to " + email) })
     }
 
     createProfile = async (user) => {
         let remoteUri = null
 
         try {
-            firebase.auth().createUserWithEmailAndPassword(user.email, user.password).then( (userInfo) => {
-                userInfo.user.updateProfile({displayName: user.name}).then( () => {console.log(userInfo);})});
+            firebase.auth().createUserWithEmailAndPassword(user.email, user.password).then((userInfo) => {
+                userInfo.user.updateProfile({ displayName: user.name }).then(() => { console.log(userInfo); })
+            });
 
             let db = this.firestore.collection("users").doc(user.email);
 
@@ -37,7 +38,7 @@ class Fire {
         }
     }
 
-    addItem = async ({name, type, location, quantity, description, owner, localUri}) => {
+    addItem = async ({ name, type, location, quantity, description, owner, localUri }) => {
         const remoteUri = await this.uploadPhotoAsync(localUri, `photos/${this.uid}/${Date.now()}.jpg`)
 
         return new Promise((res, rej) => {
@@ -51,7 +52,7 @@ class Fire {
                 uid: this.uid,
                 timestamp: this.timestamp,
                 image: remoteUri
-                })
+            })
                 .then(ref => {
                     res(ref);
                 })
@@ -70,14 +71,14 @@ class Fire {
             let upload = firebase.storage().ref(path).put(file)
 
             upload.on("state_changed",
-                    snapshot => {},
-                    err => {
-                        rej(err);
-                    },
-                    async () => {
-                        const url = await upload.snapshot.ref.getDownloadURL();
-                        res(url);
-                    }
+                snapshot => { },
+                err => {
+                    rej(err);
+                },
+                async () => {
+                    const url = await upload.snapshot.ref.getDownloadURL();
+                    res(url);
+                }
             );
 
         });
