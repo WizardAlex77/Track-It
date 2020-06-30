@@ -11,29 +11,60 @@ import {
 } from "react-native";
 import Button from "../component/Button";
 import firebaseDb from "../firebaseDb";
-import PasswordTextBox from "../component/PasswordTextBox";
-import {StaticInput, StaticPasswordInput} from "../component/StaticInput";
+import {StaticInput, StaticPasswordInput, StaticEmailInput} from "../component/StaticInput";
 import {Icon, Input, Item, Label} from "native-base";
+import Fire from "../Fire"
 
 
 class SignUpContainer extends React.Component {
   state = {
-    name: "",
-    email: "",
-    password: "",
-    password2: "",
+     user: {
+       name: "",
+       email: "",
+       password: "",
+       password2: "",
+       avatar: null
+     }
   };
 
-  handleUpdateName = (name) => this.setState({ name });
-  handleUpdateEmail = (email) => this.setState({ email });
-  handleUpdatePassword = (password) => this.setState({ password });
-  handleUpdatePassword2 = (password2) => this.setState({ password2 });
+  handleUpdateName = (name) => this.setState({ user: { ...this.state.user, name }});
+  handleUpdateEmail = (email) => this.setState({ user: { ...this.state.user, email }});
+  handleUpdatePassword = (password) => this.setState({ user: { ...this.state.user, password }});
+  handleUpdatePassword2 = (password2) => this.setState({ user: { ...this.state.user, password2 }});
   handleCreateUser = () => {
+    Fire.shared.createProfile(this.state.user).then(() => {
+      this.setState({
+        name: "",
+        email: "",
+        password: "",
+        password2: "",
+      });
+      this.props.navigation.navigate("Main");
+    });
+    /*
     firebaseDb.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then((userInfo) => {
           userInfo.user.updateProfile({displayName: this.state.name}).then( () => {console.log(userInfo);});
-        })
-    this.props.navigation.navigate("Main");
+          firebaseDb
+              .firestore()
+              .collection("users")
+              .add({
+                name: this.state.name,
+                email: this.state.email,
+                password: this.state.password,
+                avatar: ""
+              })
+              .then(() => {
+                this.setState({
+                  name: "",
+                  email: "",
+                  password: "",
+                  password2: "",
+                });
+
+              })
+              .catch((err) => console.error(err));
+        }) */
   }
 
    /* firebaseDb
@@ -43,6 +74,7 @@ class SignUpContainer extends React.Component {
         name: this.state.name,
         email: this.state.email,
         password: this.state.password,
+        avatar: ""
       })
       .then(() => {
         this.setState({
@@ -51,7 +83,7 @@ class SignUpContainer extends React.Component {
           password: "",
           password2: "",
         });
-        this.props.navigation.navigate("Home");
+
       })
       .catch((err) => console.error(err));
   }; */
@@ -59,26 +91,26 @@ class SignUpContainer extends React.Component {
   handleRegister = () => {
     Keyboard.dismiss();
     if (
-      this.state.name.length &&
-      this.state.email.length &&
-      this.state.password.length &&
-      this.state.password2.length &&
-      this.state.password == this.state.password2 &&
-      this.state.email.includes("@")
+      this.state.user.name.length &&
+      this.state.user.email.length &&
+      this.state.user.password.length &&
+      this.state.user.password2.length &&
+      this.state.user.password == this.state.password2 &&
+      this.state.user.email.includes("@")
     ) {
       this.handleCreateUser();
     } else if (
-      !this.state.name.length ||
-      !this.state.email.length ||
-      !this.state.password.length ||
-      !this.state.password2.length
+      !this.state.user.name.length ||
+      !this.state.user.email.length ||
+      !this.state.user.password.length ||
+      !this.state.user.password2.length
     ) {
       alert("Please fill in all fields");
       console.log("Empty field");
-    } else if (this.state.password != this.state.password2) {
+    } else if (this.state.user.password != this.state.user.password2) {
       alert("Passwords do not match");
       console.log("Non matching passwords");
-    } else if (!this.state.email.includes("@")) {
+    } else if (!this.state.user.email.includes("@")) {
       alert("Invalid Email");
       console.log("Invalid Email");
     }
@@ -105,15 +137,15 @@ class SignUpContainer extends React.Component {
             </View>
 
             <View style={styles.form}>
-              <StaticInput style={{marginTop: 32}} onChangeText={this.handleUpdateName} value={this.state.name}>Name</StaticInput>
-              <StaticInput style={{marginTop: 32}} onChangeText={this.handleUpdateEmail} value={this.state.email}>Email</StaticInput>
-              <StaticPasswordInput style={{marginTop: 32}} onChangeText={this.handleUpdatePassword} value={this.state.password}>Password</StaticPasswordInput>
-              <StaticPasswordInput style={{marginTop: 32, marginBottom: 30}} onChangeText={this.handleUpdatePassword2} value={this.state.password2}>Re-enter Password</StaticPasswordInput>
+              <StaticInput style={{marginTop: 32}} onChangeText={this.handleUpdateName} value={this.state.user.name}>Name</StaticInput>
+              <StaticEmailInput style={{marginTop: 32}} onChangeText={this.handleUpdateEmail} value={this.state.user.email}>Email</StaticEmailInput>
+              <StaticPasswordInput style={{marginTop: 32}} onChangeText={this.handleUpdatePassword} value={this.state.user.password}>Password</StaticPasswordInput>
+              <StaticPasswordInput style={{marginTop: 32, marginBottom: 30}} onChangeText={this.handleUpdatePassword2} value={this.state.user.password2}>Re-enter Password</StaticPasswordInput>
               <Button
                   style={styles.button}
                   onPress={() => {
                     Keyboard.dismiss();
-                    this.handleRegister();
+                    this.handleCreateUser();
                   }}s
               >
                 <Text>Sign Up</Text>

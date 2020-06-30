@@ -6,8 +6,39 @@ class Fire {
         //firebase.initializeApp(FirebaseKeys) //might or might not need HAHA
     }
 
+    updateProfilePic = async (user, email) => {
+        let remoteUri = await this.uploadPhotoAsync(user, 'avatars/${email}')
+        let db = this.firestore.collection("users").doc(email);
+        await db.set({ avatar: remoteUri }, { merge: true })
+    }
+
+    createProfile = async (user) => {
+        let remoteUri = null
+
+        try {
+            firebase.auth().createUserWithEmailAndPassword(user.email, user.password).then( (userInfo) => {
+                userInfo.user.updateProfile({displayName: user.name}).then( () => {console.log(userInfo);})});
+
+            let db = this.firestore.collection("users").doc(user.email);
+
+            await db.set({
+                name: user.name,
+                email: user.email,
+                avatar: null
+            })
+
+            if (user.avatar) {
+                remoteUri = await this.uploadPhotoAsync(user.avatar, 'avatars/${user.email}')
+
+                await db.set({ avatar: remoteUri }, { merge: true })
+            }
+        } catch (error) {
+            alert("Error :" + error);
+        }
+    }
+
     addItem = async ({name, type, location, quantity, description, owner, localUri}) => {
-        const remoteUri = await this.uploadPhotoAsync(localUri)
+        const remoteUri = await this.uploadPhotoAsync(localUri, `photos/${this.uid}/${Date.now()}.jpg`)
 
         return new Promise((res, rej) => {
             this.firestore.collection("items").add({
@@ -30,8 +61,7 @@ class Fire {
         });
     };
 
-    uploadPhotoAsync = async uri => {
-        const path = `photos/${this.uid}/${Date.now()}.jpg`
+    uploadPhotoAsync = async (uri, path) => {
 
         return new Promise(async (res, rej) => {
             const response = await fetch(uri)
