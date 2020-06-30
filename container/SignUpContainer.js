@@ -15,7 +15,6 @@ import {StaticInput, StaticPasswordInput, StaticEmailInput} from "../component/S
 import {Icon, Input, Item, Label} from "native-base";
 import Fire from "../Fire"
 
-
 class SignUpContainer extends React.Component {
   state = {
      user: {

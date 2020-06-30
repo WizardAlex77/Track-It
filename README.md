@@ -3,7 +3,7 @@ A platform for data storage with easy access to the data inside it shared over m
 
 Developed for Orbital 2020.
 
-Current Stage: User Login and Authentication
+Current Stage: Fixing UI and creating the Main Menu screens
 
 14 June: See password feature implemented and UI updates
 
