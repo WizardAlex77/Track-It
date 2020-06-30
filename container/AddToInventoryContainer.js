@@ -3,7 +3,7 @@ import {
     StyleSheet,
     View,
     Text,
-    Keyboard, ScrollView, SafeAreaView, TouchableOpacity, Image,
+    Keyboard, ScrollView, SafeAreaView, TouchableOpacity, Image, Alert
 } from "react-native";
 import firebaseDb from "../firebaseDb";
 import TextBox from "../component/TextBox";
@@ -47,7 +47,7 @@ export default class AddToInventoryContainer extends Component {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [4,3]
+            aspect: [2,1]
         });
 
         if (!result.cancelled) {
@@ -57,25 +57,36 @@ export default class AddToInventoryContainer extends Component {
     }
 
     handleAddItem2 = () => {
-        Fire.shared.addItem({
+        if (!this.state.image) {
+            Alert.alert("No Image Added", "Please attach an image of your item!");
+        } else if (!this.state.name) {
+            Alert.alert("No Name Added", "Please add a name to your item!");
+        } else if (!this.state.location) {
+            Alert.alert("No Location Added", "Please add a location to your item");
+        } else if (!this.state.quantity) {
+            Alert.alert("No Quantity Added", "Please add a quantity to your item");
+        } else {
+            Fire.shared.addItem({
                 name: this.state.name,
                 type: this.state.type,
                 location: this.state.location,
                 quantity: this.state.quantity,
                 description: this.state.description,
                 owner: firebaseDb.auth().currentUser.displayName,
-                localUri: this.state.image })
-            .then(ref => {
-                this.setState({
-                    name: "",
-                    type: "",
-                    location:"",
-                    quantity:"",
-                    description:"",
-                    image: null
-                });
-                this.props.navigation.navigate("Home");
+                localUri: this.state.image
             })
+                .then(ref => {
+                    this.setState({
+                        name: "",
+                        type: "",
+                        location: "",
+                        quantity: "",
+                        description: "",
+                        image: null
+                    });
+                    this.props.navigation.navigate("Home");
+                })
+        }
     }
 
     displayDummy = () => {

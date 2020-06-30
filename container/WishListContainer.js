@@ -5,7 +5,7 @@ export default class WishListContainer extends Component {
     render() {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>WishList</Text>
+                <Text>WishList will be coming soon!</Text>
             </View>
         )
     }

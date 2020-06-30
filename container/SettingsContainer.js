@@ -7,6 +7,9 @@ import * as Permissions from 'expo-permissions';
 import * as ImagePicker from "expo-image-picker";
 import Fire from "../Fire";
 
+const firebase = require("firebase");
+require("firebase/firestore");
+
 export default class SettingsContainer extends Component {
     state = {
         userAvatar: null,
@@ -41,7 +44,7 @@ export default class SettingsContainer extends Component {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [4,3]
+            aspect: [2,1]
         })
 
         if (!result.cancelled) {
@@ -66,10 +69,10 @@ export default class SettingsContainer extends Component {
                     </TouchableOpacity>
                 <View style={styles.form}>
                     <Button
-                        onPress={this.handleSignOut}
+                        onPress={this.handlePickAvatar}
                         style={styles.button}
                     >
-                        <Text>Edit Profile</Text>
+                        <Text>Change Profile Picture</Text>
                     </Button>
                     <Button
                         onPress={this.handleSignOut}

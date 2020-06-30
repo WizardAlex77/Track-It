@@ -12,6 +12,9 @@ import {
 import firebaseDb from "../firebaseDb";
 import Icon from "react-native-vector-icons/Ionicons";
 import SearchBar from "react-native-dynamic-search-bar";
+import Modal from 'react-native-modal';
+import HomeContainer from "./HomeContainer";
+import Home from "./HomeContainer";
 
 const firebase = require("firebase");
 require("firebase/firestore");
@@ -21,6 +24,8 @@ export default class InventoryContainer extends Component {
     Username: "not done",
     isLoading: true,
     items: null,
+    isModalVisible: false,
+    modalItem: null
   };
 
   arrayHolder = [];
@@ -47,6 +52,12 @@ export default class InventoryContainer extends Component {
       .catch((err) => console.error(err));
   }
 
+  updateItems = () => {
+    this.componentDidMount();
+    // current issue is to update states in all components every time there is an update
+    // to do: work on global states
+  }
+
   renderOwnItem = (item) => {
     return (
       <View style={styles.feedItem}>
@@ -67,11 +78,10 @@ export default class InventoryContainer extends Component {
               </Text>
             </View>
             <TouchableOpacity
-              onPress={() =>
-                Alert.alert(
-                  item.name,
-                  "Owner: " + item.owner + "\nQuantity: " + item.quantity
-                )
+              onPress={() => {
+                this.setState({modalItem: item});
+                this.toggleModal();
+              }
               }
             >
               <Icon name="ios-more" size={24} color="#73788B" />
@@ -110,6 +120,19 @@ export default class InventoryContainer extends Component {
     );
   };
 
+  toggleModal = () => {
+    this.setState({isModalVisible: !this.state.isModalVisible});
+  };
+
+  deleteItem = () => {
+    firebaseDb.firestore().collection("items").doc(this.state.modalItem.uid).delete().then(() => console.log('Document successfully deleted.'))
+    this.setState({
+      isModalVisible: false,
+      modalItem: null
+  })
+    this.updateItems();
+  };
+
   render() {
     const { items, isLoading } = this.state;
     if (isLoading) {
@@ -117,6 +140,59 @@ export default class InventoryContainer extends Component {
     } else {
       return (
         <View style={styles.container}>
+
+          <Modal isVisible={this.state.isModalVisible}>
+            <View style={{flex: 1, justifyContent: 'center'}}>
+              <View style={{width: 250, height: 470, alignSelf: 'center', backgroundColor: '#f3a0a0', paddingVertical: 15,
+                borderRadius: 15, alignItems: 'center'}}>
+                <Image source={this.state.modalItem ? { uri: this.state.modalItem.image } : require("../assets/logo.png")} style={styles.modalAvatar} />
+                <Text style={{fontWeight: "bold", fontSize: 24, marginBottom: 10}}>{this.state.modalItem ? this.state.modalItem.name : "NIL"}</Text>
+                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Location: </Text>{this.state.modalItem ? this.state.modalItem.location : "NIL"}</Text>
+                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Quantity: </Text>{this.state.modalItem ? this.state.modalItem.quantity : "NIL"}</Text>
+                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Owner: </Text>{this.state.modalItem ? this.state.modalItem.owner : "NIL"}</Text>
+                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Details: </Text>{this.state.modalItem ? this.state.modalItem.description : "NIL"}</Text>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: '#e5d84c',
+                    paddingVertical: 15,
+                    marginTop: 15,
+                    borderRadius: 15,
+                    width: 150
+                  }}
+                  onPress={() => {
+                    this.deleteItem();}
+                  }
+                >
+                  <Text style={{ textAlign: 'center',
+                    color: '#6d6a6a',
+                    fontWeight: '700',
+                  }}>
+                    Delete
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{
+                      backgroundColor: '#e5d84c',
+                      paddingVertical: 15,
+                      marginTop: 10,
+                      borderRadius: 15,
+                      width: 150
+                    }}
+                    onPress={() => {
+                      this.toggleModal();}
+                    }
+                >
+                    <Text style={{ textAlign: 'center',
+                      color: '#6d6a6a',
+                      fontWeight: '700',
+                    }}>
+                      Close
+                    </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Your Items</Text>
           </View>
@@ -134,7 +210,7 @@ export default class InventoryContainer extends Component {
   }
 }
 
-/*   componentDidMount() {
+  /* componentDidMount() {
         const {imageName} = this.state;
      let imageRef = firebaseDb.firestore().collection('users')
             .doc('12LsTRqNugb7h7BczYXX')
@@ -223,6 +299,12 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     marginRight: 16,
+  },
+  modalAvatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 18,
+    marginVertical: "10%"
   },
   name: {
     fontSize: 15,

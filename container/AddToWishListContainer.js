@@ -13,7 +13,7 @@ import {
 export default class AddToWishListContainer extends Component {
     render() {
         return (
-            <Text>hi</Text>
+            <Text style={{flex: 1, alignSelf: 'center', fontSize: 40, marginTop: "50%"}}>Coming Soon!</Text>
         )
     }
 }

@@ -27,12 +27,12 @@ class Fire {
                 email: user.email,
                 avatar: null
             })
-
+            /*
             if (user.avatar) {
                 remoteUri = await this.uploadPhotoAsync(user.avatar, 'avatars/${user.email}')
 
                 await db.set({ avatar: remoteUri }, { merge: true })
-            }
+            } */
         } catch (error) {
             alert("Error :" + error);
         }
@@ -54,6 +54,8 @@ class Fire {
                 image: remoteUri
             })
                 .then(ref => {
+                    this.firestore.collection("items").doc(ref.id).set({uid: ref.id}, {merge : true});
+                    console.log("reset uid");
                     res(ref);
                 })
                 .catch(error => {
