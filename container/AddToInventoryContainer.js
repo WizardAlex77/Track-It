@@ -8,13 +8,14 @@ import {
 import firebaseDb from "../firebaseDb";
 import TextBox from "../component/TextBox";
 import Button from "../component/Button";
-import {FieldInput} from "../component/StaticInput";
-import {Icon} from "native-base";
+import { FieldInput, DatePicker } from "../component/StaticInput";
+import { Icon } from "native-base";
 import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
 import Fire from "../Fire";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
+
 
 const firebase = require("firebase");
 require("firebase/firestore");
@@ -23,14 +24,15 @@ export default class AddToInventoryContainer extends Component {
     state = {
         name: "",
         type: "",
-        location:"",
-        quantity:"",
-        description:"",
+        location: "",
+        quantity: "",
+        expiry: 0,
+        description: "",
         image: null,
     };
 
     componentDidMount() {
-        this.getPhotoPermission().then(r => {console.log("obtained permission to photo library")});
+        this.getPhotoPermission().then(r => { console.log("obtained permission to photo library") });
     }
 
     getPhotoPermission = async () => {
@@ -47,7 +49,7 @@ export default class AddToInventoryContainer extends Component {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [2,1]
+            aspect: [2, 1]
         });
 
         if (!result.cancelled) {
@@ -71,6 +73,7 @@ export default class AddToInventoryContainer extends Component {
                 type: this.state.type,
                 location: this.state.location,
                 quantity: this.state.quantity,
+                expiry: this.state.expiry,
                 description: this.state.description,
                 owner: firebaseDb.auth().currentUser.displayName,
                 localUri: this.state.image
@@ -81,6 +84,7 @@ export default class AddToInventoryContainer extends Component {
                         type: "",
                         location: "",
                         quantity: "",
+                        expiry: 0,
                         description: "",
                         image: null
                     });
@@ -101,6 +105,11 @@ export default class AddToInventoryContainer extends Component {
     handleUpdateLocation = (location) => this.setState({ location });
     handleUpdateQuantity = (quantity) => this.setState({ quantity });
     handleUpdateDescription = (description) => this.setState({ description });
+    handleUpdateExpiry = (expiry) => {
+        var time = expiry.getTime()
+        console.log(time)
+        this.setState({ expiry: time });
+    }
     handleAddItem = () => firebaseDb
         .firestore()
         .collection('items')
@@ -109,6 +118,7 @@ export default class AddToInventoryContainer extends Component {
             type: this.state.type,
             location: this.state.location,
             quantity: this.state.quantity,
+            expiry: this.state.expiry,
             description: this.state.description,
             owner: firebaseDb.auth().currentUser.displayName,
         })
@@ -116,9 +126,10 @@ export default class AddToInventoryContainer extends Component {
             this.setState({
                 name: "",
                 type: "",
-                location:"",
-                quantity:"",
-                description:""
+                location: "",
+                quantity: "",
+                expiry: "",
+                description: ""
             });
             this.props.navigation.navigate("Home");
         })
@@ -132,36 +143,42 @@ export default class AddToInventoryContainer extends Component {
                         <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
                             <Icon name="ios-arrow-round-back" size={32} color="#FFF" />
                         </TouchableOpacity>
-                        <View style={{marginTop: 20}}>
+                        <View style={{ marginTop: 20 }}>
                             <Text style={styles.greeting}>Add an Item!</Text>
                         </View>
-                        <TouchableOpacity style={[styles.avatarPlaceHolder, {alignSelf: 'center'}]} onPress={this.pickImage}>
-                            {this.state.image!=null && this.displayImage()}
-                            {this.state.image==null && this.displayDummy()}
+                        <TouchableOpacity style={[styles.avatarPlaceHolder, { alignSelf: 'center' }]} onPress={this.pickImage}>
+                            {this.state.image != null && this.displayImage()}
+                            {this.state.image == null && this.displayDummy()}
                         </TouchableOpacity>
                         <View style={styles.form}>
                             <FieldInput
-                                style={{marginTop: 20}}
+                                style={{ marginTop: 20 }}
                                 onChangeText={this.handleUpdateName}
                                 value={this.state.name}
                             >Name</FieldInput>
                             <FieldInput
-                                style={{marginTop: 20}}
+                                style={{ marginTop: 20 }}
                                 onChangeText={this.handleUpdateType}
                                 value={this.state.type}
                             >Type</FieldInput>
                             <FieldInput
-                                style={{marginTop: 20}}
+                                style={{ marginTop: 20 }}
                                 onChangeText={this.handleUpdateQuantity}
                                 value={this.state.quantity}
                             >Quantity</FieldInput>
                             <FieldInput
-                                style={{marginTop: 20}}
+                                style={{ marginTop: 20 }}
                                 onChangeText={this.handleUpdateLocation}
                                 value={this.state.location}
                             >Location</FieldInput>
+                            <DatePicker
+                                style={{ marginTop: 20 }}
+                                onChange={this.handleUpdateExpiry}
+                                value={this.state.expiry}
+                                date={this.state.expiry}
+                            ></DatePicker>
                             <FieldInput
-                                style={{marginTop: 20 ,marginBottom: 30}}
+                                style={{ marginTop: 20, marginBottom: 30 }}
                                 onChangeText={this.handleUpdateDescription}
                                 value={this.state.description}
                             >Description</FieldInput>
@@ -192,7 +209,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: 'center',
     },
-    avatarPlaceHolder :{
+    avatarPlaceHolder: {
         width: 100,
         height: 100,
         backgroundColor: "#E1E2E6",

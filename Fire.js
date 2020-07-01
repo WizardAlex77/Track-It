@@ -38,8 +38,9 @@ class Fire {
         }
     }
 
-    addItem = async ({ name, type, location, quantity, description, owner, localUri }) => {
-        const remoteUri = await this.uploadPhotoAsync(localUri, `photos/${this.uid}/${Date.now()}.jpg`)
+    addItem = async ({ name, type, location, quantity, description, owner, localUri, expiry }) => {
+        const remoteUri = await this.uploadPhotoAsync(localUri, `photos/${this.uid}/${Date.now()}.jpg`);
+        var expiryChanged = (expiry === 0 ? "" : new Date(expiry));
 
         return new Promise((res, rej) => {
             this.firestore.collection("items").add({
@@ -49,13 +50,15 @@ class Fire {
                 quantity,
                 description,
                 owner,
+                expiry: expiryChanged,
                 uid: this.uid,
                 timestamp: this.timestamp,
                 image: remoteUri
             })
                 .then(ref => {
-                    this.firestore.collection("items").doc(ref.id).set({uid: ref.id}, {merge : true});
+                    this.firestore.collection("items").doc(ref.id).set({ uid: ref.id }, { merge: true });
                     console.log("reset uid");
+                    console.log(firebase.firestore.Timestamp(expiry))
                     res(ref);
                 })
                 .catch(error => {
