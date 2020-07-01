@@ -49,12 +49,13 @@ class Fire {
                 quantity,
                 description,
                 owner,
+                expiry,
                 uid: this.uid,
                 timestamp: this.timestamp,
                 image: remoteUri
             })
                 .then(ref => {
-                    this.firestore.collection("items").doc(ref.id).set({uid: ref.id}, {merge : true});
+                    this.firestore.collection("items").doc(ref.id).set({ uid: ref.id }, { merge: true });
                     console.log("reset uid");
                     res(ref);
                 })

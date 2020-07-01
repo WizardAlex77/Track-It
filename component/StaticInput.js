@@ -1,5 +1,8 @@
 import React, { Component } from "react";
-import { TextInput, Text, StyleSheet, View } from 'react-native'
+import { TextInput, Text, StyleSheet, View } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
+
 
 export const StaticInput = props => (
     <View style={props.style}>
@@ -26,6 +29,19 @@ export const FieldInput = props => (
     <View style={props.style}>
         <Text style={styles.inputTitle}>{props.children}</Text>
         <TextInput style={styles.input} onChangeText={props.onChangeText} value={props.value} />
+    </View>
+)
+
+export const DatePicker = props => (
+    <View style={props.style}>
+        <DateTimePicker
+            style={styles.input}
+            value={props.value}
+            mode="date"
+            display="default"
+            onChange={props.onChange}
+            placeholder="select date"
+        />
     </View>
 )
 
