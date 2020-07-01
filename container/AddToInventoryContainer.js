@@ -15,7 +15,6 @@ import * as Permissions from "expo-permissions";
 import Fire from "../Fire";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 const firebase = require("firebase");
@@ -27,7 +26,7 @@ export default class AddToInventoryContainer extends Component {
         type: "",
         location: "",
         quantity: "",
-        expiry: "",
+        expiry: 0,
         description: "",
         image: null,
     };
@@ -74,6 +73,7 @@ export default class AddToInventoryContainer extends Component {
                 type: this.state.type,
                 location: this.state.location,
                 quantity: this.state.quantity,
+                expiry: this.state.expiry,
                 description: this.state.description,
                 owner: firebaseDb.auth().currentUser.displayName,
                 localUri: this.state.image
@@ -84,6 +84,7 @@ export default class AddToInventoryContainer extends Component {
                         type: "",
                         location: "",
                         quantity: "",
+                        expiry: 0,
                         description: "",
                         image: null
                     });
@@ -104,7 +105,11 @@ export default class AddToInventoryContainer extends Component {
     handleUpdateLocation = (location) => this.setState({ location });
     handleUpdateQuantity = (quantity) => this.setState({ quantity });
     handleUpdateDescription = (description) => this.setState({ description });
-    handleUpdateExpiry = (expiry) => this.setState({ expiry });
+    handleUpdateExpiry = (expiry) => {
+        var time = expiry.getTime()
+        console.log(time)
+        this.setState({ expiry: time });
+    }
     handleAddItem = () => firebaseDb
         .firestore()
         .collection('items')
@@ -169,8 +174,9 @@ export default class AddToInventoryContainer extends Component {
                             <DatePicker
                                 style={{ marginTop: 20 }}
                                 onChange={this.handleUpdateExpiry}
-                                value={Date.now()}
-                            >Expiry Date(If any)</DatePicker>
+                                value={this.state.expiry}
+                                date={this.state.expiry}
+                            ></DatePicker>
                             <FieldInput
                                 style={{ marginTop: 20, marginBottom: 30 }}
                                 onChangeText={this.handleUpdateDescription}
