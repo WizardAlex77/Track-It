@@ -79,7 +79,7 @@ export default class InventoryContainer extends Component {
             </View>
             <TouchableOpacity
               onPress={() => {
-                this.setState({modalItem: item});
+                this.setState({ modalItem: item });
                 this.toggleModal();
               }
               }
@@ -115,13 +115,13 @@ export default class InventoryContainer extends Component {
         autoCorrect={false}
         onPressFocus
         autoFocus={false}
-        onPress={() => {}}
+        onPress={() => { }}
       />
     );
   };
 
   toggleModal = () => {
-    this.setState({isModalVisible: !this.state.isModalVisible});
+    this.setState({ isModalVisible: !this.state.isModalVisible });
   };
 
   deleteItem = () => {
@@ -129,7 +129,7 @@ export default class InventoryContainer extends Component {
     this.setState({
       isModalVisible: false,
       modalItem: null
-  })
+    })
     this.updateItems();
   };
 
@@ -142,15 +142,19 @@ export default class InventoryContainer extends Component {
         <View style={styles.container}>
 
           <Modal isVisible={this.state.isModalVisible}>
-            <View style={{flex: 1, justifyContent: 'center'}}>
-              <View style={{width: 250, height: 470, alignSelf: 'center', backgroundColor: '#f3a0a0', paddingVertical: 15,
-                borderRadius: 15, alignItems: 'center'}}>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <View style={{
+                width: 250, height: 470, alignSelf: 'center', backgroundColor: '#f3a0a0', paddingVertical: 15,
+                borderRadius: 15, alignItems: 'center'
+              }}>
                 <Image source={this.state.modalItem ? { uri: this.state.modalItem.image } : require("../assets/logo.png")} style={styles.modalAvatar} />
-                <Text style={{fontWeight: "bold", fontSize: 24, marginBottom: 10}}>{this.state.modalItem ? this.state.modalItem.name : "NIL"}</Text>
-                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Location: </Text>{this.state.modalItem ? this.state.modalItem.location : "NIL"}</Text>
-                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Quantity: </Text>{this.state.modalItem ? this.state.modalItem.quantity : "NIL"}</Text>
-                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Owner: </Text>{this.state.modalItem ? this.state.modalItem.owner : "NIL"}</Text>
-                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Details: </Text>{this.state.modalItem ? this.state.modalItem.description : "NIL"}</Text>
+                <Text style={{ fontWeight: "bold", fontSize: 24, marginBottom: 10 }}>{this.state.modalItem ? this.state.modalItem.name : "NIL"}</Text>
+                <Text style={{ alignSelf: 'flex-start', marginLeft: "12%" }}><Text style={{ fontWeight: "bold" }}>Location: </Text>{this.state.modalItem ? this.state.modalItem.location : "NIL"}</Text>
+                <Text style={{ alignSelf: 'flex-start', marginLeft: "12%" }}><Text style={{ fontWeight: "bold" }}>Quantity: </Text>{this.state.modalItem ? this.state.modalItem.quantity : "NIL"}</Text>
+                <Text style={{ alignSelf: 'flex-start', marginLeft: "12%" }}><Text style={{ fontWeight: "bold" }}>Owner: </Text>{this.state.modalItem ? this.state.modalItem.owner : "NIL"}</Text>
+                {(this.state.modalItem ? this.state.modalItem.perishable : false) &&
+                  <Text style={{ alignSelf: 'flex-start', marginLeft: "12%" }}><Text style={{ fontWeight: "bold" }}>Expiry: </Text>{this.state.modalItem ? this.state.modalItem.expiry.toDate().toDateString() : "NIL"}</Text>
+                }
                 <TouchableOpacity
                   style={{
                     backgroundColor: '#e5d84c',
@@ -160,10 +164,12 @@ export default class InventoryContainer extends Component {
                     width: 150
                   }}
                   onPress={() => {
-                    this.deleteItem();}
+                    this.deleteItem();
+                  }
                   }
                 >
-                  <Text style={{ textAlign: 'center',
+                  <Text style={{
+                    textAlign: 'center',
                     color: '#6d6a6a',
                     fontWeight: '700',
                   }}>
@@ -171,22 +177,24 @@ export default class InventoryContainer extends Component {
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={{
-                      backgroundColor: '#e5d84c',
-                      paddingVertical: 15,
-                      marginTop: 10,
-                      borderRadius: 15,
-                      width: 150
-                    }}
-                    onPress={() => {
-                      this.toggleModal();}
-                    }
+                  style={{
+                    backgroundColor: '#e5d84c',
+                    paddingVertical: 15,
+                    marginTop: 10,
+                    borderRadius: 15,
+                    width: 150
+                  }}
+                  onPress={() => {
+                    this.toggleModal();
+                  }
+                  }
                 >
-                    <Text style={{ textAlign: 'center',
-                      color: '#6d6a6a',
-                      fontWeight: '700',
-                    }}>
-                      Close
+                  <Text style={{
+                    textAlign: 'center',
+                    color: '#6d6a6a',
+                    fontWeight: '700',
+                  }}>
+                    Close
                     </Text>
                 </TouchableOpacity>
               </View>
@@ -210,18 +218,18 @@ export default class InventoryContainer extends Component {
   }
 }
 
-  /* componentDidMount() {
-        const {imageName} = this.state;
-     let imageRef = firebaseDb.firestore().collection('users')
-            .doc('12LsTRqNugb7h7BczYXX')
-            .collection('Items')
-            .ref('/' + imageName);
-        imageRef.getDownloadURL()
-            .then((url) => {
-                //from url you can fetched the uploaded image easily
-                this.setState({profileImageUrl: url});
-            })
-            .catch((e) => console.log('getting downloadURL of image error => ', e));*/
+/* componentDidMount() {
+      const {imageName} = this.state;
+   let imageRef = firebaseDb.firestore().collection('users')
+          .doc('12LsTRqNugb7h7BczYXX')
+          .collection('Items')
+          .ref('/' + imageName);
+      imageRef.getDownloadURL()
+          .then((url) => {
+              //from url you can fetched the uploaded image easily
+              this.setState({profileImageUrl: url});
+          })
+          .catch((e) => console.log('getting downloadURL of image error => ', e));*/
 /*    firebaseDb.firestore().collection('users')
             .doc('12LsTRqNugb7h7BczYXX')
             .collection('Items')

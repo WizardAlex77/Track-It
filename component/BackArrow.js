@@ -3,14 +3,16 @@ import { BackHandler, TouchableOpacity, View } from "react-native";
 import Icons from "react-native-vector-icons/MaterialIcons";
 
 export default class BackArrow extends Component {
-  /*   constructor(props) {
+  constructor(props) {
     super(props);
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
-  } */
+  }
+
   handleBackButtonClick = () => {
-    this.props.navigation.goBack();
+    this.props.navigation.navigate('Main');
     return true;
   };
+
   render() {
     return (
       <View>

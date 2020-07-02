@@ -51,14 +51,14 @@ export const DatePicker = props => {
 
     return (
         <View style={props.style}>
-            <Text style={styles.inputTitle}>Date</Text>
+            <Text style={styles.inputTitle}>{props.placeholder}</Text>
             <TouchableOpacity style={styles.input} value={props.value} onPress={showDatePicker}>
                 <Text style={styles.input, { marginTop: 10 }}>{(props.date != 0 ? (new Date(props.date)).toDateString() : "")}</Text>
             </TouchableOpacity>
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
-                onConfirm={handleConfirm, props.onChange}
+                onConfirm={props.onChange}
                 onCancel={hideDatePicker}
             />
         </View>)

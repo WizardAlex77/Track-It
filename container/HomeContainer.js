@@ -74,7 +74,7 @@ export default class Home extends Component {
         onPressCancel={() => { this.searchFilterFunction("") }}
         onPressFocus
         autoFocus={false}
-        onPress={() => {}}
+        onPress={() => { }}
       />
     );
   };
@@ -100,9 +100,9 @@ export default class Home extends Component {
             </View>
             <TouchableOpacity
               onPress={() => {
-                this.setState({ modalItem: item});
+                this.setState({ modalItem: item });
                 this.toggleModal();
-                }
+              }
               }
             >
               <Icon name="ios-more" size={24} color="#73788B" />
@@ -114,7 +114,7 @@ export default class Home extends Component {
   };
 
   toggleModal = () => {
-    this.setState({isModalVisible: !this.state.isModalVisible});
+    this.setState({ isModalVisible: !this.state.isModalVisible });
   };
 
   updateItems = () => {
@@ -130,28 +130,35 @@ export default class Home extends Component {
         <View style={styles.container}>
 
           <Modal isVisible={this.state.isModalVisible}>
-            <View style={{flex: 1, justifyContent: 'center'}}>
-              <View style={{width: 250, height: 400, alignSelf: 'center', backgroundColor: '#f3a0a0', paddingVertical: 15,
-                borderRadius: 15, alignItems: 'center'}}>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <View style={{
+                width: 250, height: 400, alignSelf: 'center', backgroundColor: '#f3a0a0', paddingVertical: 15,
+                borderRadius: 15, alignItems: 'center'
+              }}>
                 <Image source={this.state.modalItem ? { uri: this.state.modalItem.image } : require("../assets/logo.png")} style={styles.modalAvatar} />
-                <Text style={{fontWeight: "bold", fontSize: 24, marginBottom: 10}}>{this.state.modalItem ? this.state.modalItem.name : "NIL"}</Text>
-                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Location: </Text>{this.state.modalItem ? this.state.modalItem.location : "NIL"}</Text>
-                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Quantity: </Text>{this.state.modalItem ? this.state.modalItem.quantity : "NIL"}</Text>
-                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Owner: </Text>{this.state.modalItem ? this.state.modalItem.owner : "NIL"}</Text>
-                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Details: </Text>{this.state.modalItem ? this.state.modalItem.description : "NIL"}</Text>
+                <Text style={{ fontWeight: "bold", fontSize: 24, marginBottom: 10 }}>{this.state.modalItem ? this.state.modalItem.name : "NIL"}</Text>
+                <Text style={{ alignSelf: 'flex-start', marginLeft: "12%" }}><Text style={{ fontWeight: "bold" }}>Location: </Text>{this.state.modalItem ? this.state.modalItem.location : "NIL"}</Text>
+                <Text style={{ alignSelf: 'flex-start', marginLeft: "12%" }}><Text style={{ fontWeight: "bold" }}>Quantity: </Text>{this.state.modalItem ? this.state.modalItem.quantity : "NIL"}</Text>
+                <Text style={{ alignSelf: 'flex-start', marginLeft: "12%" }}><Text style={{ fontWeight: "bold" }}>Owner: </Text>{this.state.modalItem ? this.state.modalItem.owner : "NIL"}</Text>
+                {(this.state.modalItem ? this.state.modalItem.perishable : false) &&
+                  <Text style={{ alignSelf: 'flex-start', marginLeft: "12%" }}><Text style={{ fontWeight: "bold" }}>Expiry: </Text>{this.state.modalItem ? this.state.modalItem.expiry.toDate().toDateString() : "NIL"}</Text>
+                }
+                <Text style={{ alignSelf: 'flex-start', marginLeft: "12%" }}><Text style={{ fontWeight: "bold" }}>Details: </Text>{this.state.modalItem ? this.state.modalItem.description : "NIL"}</Text>
                 <TouchableOpacity
-                    style={{
-                      backgroundColor: '#e5d84c',
-                      paddingVertical: 15,
-                      marginTop: 15,
-                      borderRadius: 15,
-                      width: 150
-                    }}
-                    onPress={() => {
-                        this.toggleModal();}
-                    }
+                  style={{
+                    backgroundColor: '#e5d84c',
+                    paddingVertical: 15,
+                    marginTop: 15,
+                    borderRadius: 15,
+                    width: 150
+                  }}
+                  onPress={() => {
+                    this.toggleModal();
+                  }
+                  }
                 >
-                  <Text style={{ textAlign: 'center',
+                  <Text style={{
+                    textAlign: 'center',
                     color: '#6d6a6a',
                     fontWeight: '700',
                   }}>

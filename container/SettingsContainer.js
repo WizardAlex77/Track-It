@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Text, View, StyleSheet, Image, TouchableOpacity} from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import firebaseDb from "../firebaseDb";
 import Button from "../component/Button";
 import Constants from 'expo-constants';
@@ -7,13 +7,14 @@ import * as Permissions from 'expo-permissions';
 import * as ImagePicker from "expo-image-picker";
 import Fire from "../Fire";
 
+const { Navigation } = require('react-native-navigation');
 const firebase = require("firebase");
 require("firebase/firestore");
 
 export default class SettingsContainer extends Component {
     state = {
         userAvatar: null,
-        userEmail : null
+        userEmail: null
     };
 
     componentDidMount() {
@@ -39,12 +40,12 @@ export default class SettingsContainer extends Component {
     }
 
     handlePickAvatar = async () => {
-        this.getCameraPermission().then(r => {console.log("obtained permission to photo library")});
+        this.getCameraPermission().then(r => { console.log("obtained permission to photo library") });
 
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [2,1]
+            aspect: [2, 1]
         })
 
         if (!result.cancelled) {
@@ -56,17 +57,20 @@ export default class SettingsContainer extends Component {
     }
 
     handleSignOut = () => {
-        firebaseDb.auth().signOut().then( () =>
+        firebaseDb.auth().signOut().then(() =>
             console.log("signed out")
         );
         this.props.navigation.navigate('Log In')
     }
+
+    handleExpiry = () => { }
+
     render() {
         return (
             <View style={styles.container}>
-                    <TouchableOpacity style={[styles.avatarPlaceHolder, {alignSelf: 'center'}]} onPress={this.handlePickAvatar}>
-                        <Image style={styles.avatar} source={this.state.userAvatar ? { uri: this.state.userAvatar } : require("../assets/dummy-avatar.jpg") } />
-                    </TouchableOpacity>
+                <TouchableOpacity style={[styles.avatarPlaceHolder, { alignSelf: 'center' }]} onPress={this.handlePickAvatar}>
+                    <Image style={styles.avatar} source={this.state.userAvatar ? { uri: this.state.userAvatar } : require("../assets/dummy-avatar.jpg")} />
+                </TouchableOpacity>
                 <View style={styles.form}>
                     <Button
                         onPress={this.handlePickAvatar}
@@ -79,6 +83,9 @@ export default class SettingsContainer extends Component {
                         style={styles.button}
                     >
                         <Text>Sign Out</Text>
+                    </Button>
+                    <Button onPress={this.handleExpiry} style={styles.button}>
+                        <Text>Check Expiring products</Text>
                     </Button>
                 </View>
             </View>
@@ -116,7 +123,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center"
     },
-    avatarPlaceHolder :{
+    avatarPlaceHolder: {
         width: 100,
         height: 100,
         backgroundColor: "#E1E2E6",

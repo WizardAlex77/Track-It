@@ -29,7 +29,9 @@ export default class AddToInventoryContainer extends Component {
         expiry: 0,
         description: "",
         image: null,
+        perishable: false,
     };
+
 
     componentDidMount() {
         this.getPhotoPermission().then(r => { console.log("obtained permission to photo library") });
@@ -75,6 +77,7 @@ export default class AddToInventoryContainer extends Component {
                 quantity: this.state.quantity,
                 expiry: this.state.expiry,
                 description: this.state.description,
+                perishable: this.state.perishable,
                 owner: firebaseDb.auth().currentUser.displayName,
                 localUri: this.state.image
             })
@@ -86,7 +89,8 @@ export default class AddToInventoryContainer extends Component {
                         quantity: "",
                         expiry: 0,
                         description: "",
-                        image: null
+                        image: null,
+                        perishable: false
                     });
                     this.props.navigation.navigate("Home");
                 })
@@ -108,7 +112,10 @@ export default class AddToInventoryContainer extends Component {
     handleUpdateExpiry = (expiry) => {
         var time = expiry.getTime()
         console.log(time)
-        this.setState({ expiry: time });
+        this.setState({
+            expiry: time,
+            perishable: true
+        });
     }
     handleAddItem = () => firebaseDb
         .firestore()
@@ -176,6 +183,7 @@ export default class AddToInventoryContainer extends Component {
                                 onChange={this.handleUpdateExpiry}
                                 value={this.state.expiry}
                                 date={this.state.expiry}
+                                placeholder="Expiry Date (if any)"
                             ></DatePicker>
                             <FieldInput
                                 style={{ marginTop: 20, marginBottom: 30 }}

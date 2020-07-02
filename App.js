@@ -16,6 +16,7 @@ import firebaseDb from "./firebaseDb";
 import InventoryContainer from "./container/InventoryContainer";
 import AddToInventoryContainer from "./container/AddToInventoryContainer"
 import AddToWishListContainer from "./container/AddToWishListContainer"
+import ExpiryContainer from "./container/ExpiryContainer";
 
 if (!global.btoa) {
   global.btoa = encode;
@@ -32,43 +33,43 @@ const SettingStack = createStackNavigator();
 const AddItemStack = createStackNavigator();
 
 export default function App() {
-    const createSettingStack = () => {
-        return (
-            <SettingStack.Navigator initialRouteName="Settings">
-                <SettingStack.Screen
-                    name="Settings"
-                    component={SettingsContainer}
-                    options={{
-                        headerShown: false
-                    }}
-                />
-            </SettingStack.Navigator>
-        )
-    }
+  const createSettingStack = () => {
+    return (
+      <SettingStack.Navigator initialRouteName="Settings">
+        <SettingStack.Screen
+          name="Settings"
+          component={SettingsContainer}
+          options={{
+            headerShown: false
+          }}
+        />
+      </SettingStack.Navigator>
+    )
+  }
 
-    const createAddItemStack = () => {
-        return (
-            <AddItemStack.Navigator
-                initialRouteName="Add Item Selection"
-                headerMode="none"
-            >
-                <AddItemStack.Screen
-                    name="Add Item Selection"
-                    component={AddItemContainer}
-                />
-                <AddItemStack.Screen
-                    name="Add Item to Inventory"
-                    component={AddToInventoryContainer}
-                />
-                <AddItemStack.Screen
-                    name="Add Item to WishList"
-                    component={AddToWishListContainer}
-                />
-            </AddItemStack.Navigator>
-        )
-    }
+  const createAddItemStack = () => {
+    return (
+      <AddItemStack.Navigator
+        initialRouteName="Add Item Selection"
+        headerMode="none"
+      >
+        <AddItemStack.Screen
+          name="Add Item Selection"
+          component={AddItemContainer}
+        />
+        <AddItemStack.Screen
+          name="Add Item to Inventory"
+          component={AddToInventoryContainer}
+        />
+        <AddItemStack.Screen
+          name="Add Item to WishList"
+          component={AddToWishListContainer}
+        />
+      </AddItemStack.Navigator>
+    )
+  }
 
-    const createBottomTab = () => {
+  const createBottomTab = () => {
     return (
       <MenuTab.Navigator
         initialRouteName="Home"
@@ -102,7 +103,7 @@ export default function App() {
           children={createAddItemStack}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Icon name="ios-add-circle" color="red" size="40" />
+              <Icon name="ios-add-circle" color="red" size={40} />
             ),
           }}
         />
@@ -145,6 +146,7 @@ export default function App() {
         <AccountStack.Screen name="Log In" component={LogInContainer} />
         <AccountStack.Screen name="Sign Up" component={SignUpContainer} />
         <AccountStack.Screen name="Main" children={createBottomTab} />
+        {/* <AccountStack.Screen name="Expiry" component={ExpiryContainer} /> */}
       </AccountStack.Navigator>
     </NavigationContainer>
   );
