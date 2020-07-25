@@ -14,15 +14,31 @@ import firebaseDb from "../firebaseDb";
 import Icon from "react-native-vector-icons/Ionicons";
 import SearchBar from "react-native-dynamic-search-bar";
 import Modal from 'react-native-modal';
+import { connect } from 'react-redux';
+import {watchItemData, updateHomeDisplay} from '../app-redux';
 
 const firebase = require("firebase");
 require("firebase/firestore");
 
-export default class Home extends Component {
+const mapStateToProps = (state) => {
+  return {
+    items: state.items,
+    homeDisplay: state.homeDisplay,
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    watchItemData: () => dispatch(watchItemData()),
+    updateHomeDisplay: (data) => dispatch(updateHomeDisplay(data))
+  };
+}
+
+class Home extends Component {
   state = {
     Username: "not done",
     isLoading: true,
-    items: null,
+    items: [],
     isModalVisible: false,
     modalItem: null
   };
@@ -30,27 +46,23 @@ export default class Home extends Component {
   arrayHolder = [];
 
   componentDidMount() {
-    firebaseDb
-      .firestore()
-      .collection("items")
-      .get()
-      .then((querySnapshot) => {
+    this.props.watchItemData();
+    firebaseDb.firestore().collection("items")
+      .get().then((querySnapshot) => {
         const results = [];
         querySnapshot.docs.map((documentSnapshot) =>
           results.push(documentSnapshot.data())
         );
         this.setState({
           isLoading: false,
-          items: results,
           Username: firebaseDb.auth().currentUser.displayName,
         });
-        this.arrayHolder = results;
         console.log("loaded " + this.state.Username);
-      })
-      .catch((err) => console.error(err));
+      }).catch((err) => console.error(err));
   }
 
   searchFilterFunction = (text) => {
+    this.arrayHolder = this.props.items;
     const newData = this.arrayHolder.filter(item => {
       const nameData = `${item.name.toUpperCase()}`;
       const locationData = `${item.location.toUpperCase()}`;
@@ -59,8 +71,7 @@ export default class Home extends Component {
 
       return nameData.indexOf(textData) > -1 || locationData.indexOf(textData) > -1 || typeData.indexOf(textData) > -1;
     });
-
-    this.setState({ items: newData });
+    this.props.updateHomeDisplay(newData);
   };
 
   renderHeader = () => {
@@ -117,12 +128,8 @@ export default class Home extends Component {
     this.setState({isModalVisible: !this.state.isModalVisible});
   };
 
-  updateItems = () => {
-    this.componentDidMount();
-  }
-
   render() {
-    const { items, isLoading } = this.state;
+    const { isLoading } = this.state;
     if (isLoading) {
       return <ActivityIndicator />;
     } else {
@@ -131,13 +138,14 @@ export default class Home extends Component {
 
           <Modal isVisible={this.state.isModalVisible}>
             <View style={{flex: 1, justifyContent: 'center'}}>
-              <View style={{width: 250, height: 400, alignSelf: 'center', backgroundColor: '#f3a0a0', paddingVertical: 15,
+              <View style={{width: 250, height: 430, alignSelf: 'center', backgroundColor: '#f3a0a0', paddingVertical: 15,
                 borderRadius: 15, alignItems: 'center'}}>
                 <Image source={this.state.modalItem ? { uri: this.state.modalItem.image } : require("../assets/logo.png")} style={styles.modalAvatar} />
                 <Text style={{fontWeight: "bold", fontSize: 24, marginBottom: 10}}>{this.state.modalItem ? this.state.modalItem.name : "NIL"}</Text>
                 <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Location: </Text>{this.state.modalItem ? this.state.modalItem.location : "NIL"}</Text>
                 <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Quantity: </Text>{this.state.modalItem ? this.state.modalItem.quantity : "NIL"}</Text>
                 <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Owner: </Text>{this.state.modalItem ? this.state.modalItem.owner : "NIL"}</Text>
+                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Expiry Date: </Text>{this.state.modalItem ? (this.state.modalItem.expiry == "None" ? "None" : this.state.modalItem.expiry.toDate().toString().substring(4,15) ): "NIL"}</Text>
                 <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Details: </Text>{this.state.modalItem ? this.state.modalItem.description : "NIL"}</Text>
                 <TouchableOpacity
                     style={{
@@ -168,16 +176,19 @@ export default class Home extends Component {
 
           <FlatList
             style={styles.feed}
-            data={items}
+            data={this.props.homeDisplay}
             renderItem={({ item }) => this.renderItem(item)}
             keyExtractor={(item) => item.name}
             ListHeaderComponent={this.renderHeader}
           />
+
         </View>
       );
     }
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
 const styles = StyleSheet.create({
   container: {

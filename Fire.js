@@ -48,9 +48,9 @@ class Fire {
                 type,
                 location,
                 quantity,
-                description,
+                description: description ? description : "None",
                 owner,
-                expiry: expiryChanged,
+                expiry: expiry ? new Date(expiry) : "None",
                 uid: this.uid,
                 timestamp: this.timestamp,
                 image: remoteUri
@@ -58,7 +58,7 @@ class Fire {
                 .then(ref => {
                     this.firestore.collection("items").doc(ref.id).set({ uid: ref.id }, { merge: true });
                     console.log("reset uid");
-                    console.log(firebase.firestore.Timestamp(expiry))
+                    //console.log(firebase.firestore.Timestamp(expiry))
                     res(ref);
                 })
                 .catch(error => {

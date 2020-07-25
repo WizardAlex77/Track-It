@@ -13,13 +13,28 @@ import firebaseDb from "../firebaseDb";
 import Icon from "react-native-vector-icons/Ionicons";
 import SearchBar from "react-native-dynamic-search-bar";
 import Modal from 'react-native-modal';
-import HomeContainer from "./HomeContainer";
-import Home from "./HomeContainer";
+import { connect } from 'react-redux';
+import {watchItemData, updateInventoryDisplay, watchItemExpiry} from '../app-redux';
 
 const firebase = require("firebase");
 require("firebase/firestore");
 
-export default class InventoryContainer extends Component {
+const mapStateToProps = (state) => {
+  return {
+    items: state.items,
+    inventoryDisplay: state.inventoryDisplay,
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    watchItemData: () => dispatch(watchItemData()),
+    watchItemExpiry: () => dispatch(watchItemExpiry()),
+    updateInventoryDisplay: (data) => dispatch(updateInventoryDisplay(data))
+  };
+}
+
+class InventoryContainer extends Component {
   state = {
     Username: "not done",
     isLoading: true,
@@ -31,6 +46,7 @@ export default class InventoryContainer extends Component {
   arrayHolder = [];
 
   componentDidMount() {
+    this.props.watchItemData();
     firebaseDb
       .firestore()
       .collection("items")
@@ -50,12 +66,6 @@ export default class InventoryContainer extends Component {
         console.log("loaded " + this.state.Username);
       })
       .catch((err) => console.error(err));
-  }
-
-  updateItems = () => {
-    this.componentDidMount();
-    // current issue is to update states in all components every time there is an update
-    // to do: work on global states
   }
 
   renderOwnItem = (item) => {
@@ -93,6 +103,7 @@ export default class InventoryContainer extends Component {
   };
 
   searchFilterFunction = (text) => {
+    this.arrayHolder = this.props.items;
     const newData = this.arrayHolder.filter(item => {
       const nameData = `${item.name.toUpperCase()}`;
       const locationData = `${item.location.toUpperCase()}`;
@@ -101,8 +112,7 @@ export default class InventoryContainer extends Component {
 
       return nameData.indexOf(textData) > -1 || locationData.indexOf(textData) > -1 || typeData.indexOf(textData) > -1;
     });
-
-    this.setState({ items: newData });
+    this.props.updateInventoryDisplay(newData);
   };
 
   renderHeader = () => {
@@ -113,6 +123,7 @@ export default class InventoryContainer extends Component {
         round
         onChangeText={text => this.searchFilterFunction(text)}
         autoCorrect={false}
+        onPressCancel={() => { this.searchFilterFunction("") }}
         onPressFocus
         autoFocus={false}
         onPress={() => {}}
@@ -125,16 +136,24 @@ export default class InventoryContainer extends Component {
   };
 
   deleteItem = () => {
-    firebaseDb.firestore().collection("items").doc(this.state.modalItem.uid).delete().then(() => console.log('Document successfully deleted.'))
+    firebaseDb.firestore()
+        .collection("items")
+        .doc(this.state.modalItem.uid)
+        .delete()
+        .then(() => {
+          console.log('Document successfully deleted.');
+          this.props.watchItemData();
+          this.props.watchItemExpiry();
+        });
     this.setState({
       isModalVisible: false,
       modalItem: null
   })
-    this.updateItems();
+
   };
 
   render() {
-    const { items, isLoading } = this.state;
+    const { isLoading } = this.state;
     if (isLoading) {
       return <ActivityIndicator />;
     } else {
@@ -199,7 +218,7 @@ export default class InventoryContainer extends Component {
 
           <FlatList
             style={styles.feed}
-            data={items}
+            data={this.props.inventoryDisplay}
             renderItem={({ item }) => this.renderOwnItem(item)}
             keyExtractor={(item) => item.name}
             ListHeaderComponent={this.renderHeader}
@@ -210,57 +229,7 @@ export default class InventoryContainer extends Component {
   }
 }
 
-  /* componentDidMount() {
-        const {imageName} = this.state;
-     let imageRef = firebaseDb.firestore().collection('users')
-            .doc('12LsTRqNugb7h7BczYXX')
-            .collection('Items')
-            .ref('/' + imageName);
-        imageRef.getDownloadURL()
-            .then((url) => {
-                //from url you can fetched the uploaded image easily
-                this.setState({profileImageUrl: url});
-            })
-            .catch((e) => console.log('getting downloadURL of image error => ', e));*/
-/*    firebaseDb.firestore().collection('users')
-            .doc('12LsTRqNugb7h7BczYXX')
-            .collection('Items')
-            .get()
-            .then((querySnapshot) => {
-                const results = [];
-                querySnapshot.docs.map((documentSnapshot) =>
-                    results.push(documentSnapshot.data())
-                );
-                this.setState({isLoading: false, users: results});
-            }).catch(err => console.error(err));
-    }
-
-    constant ref = firebase.storage().ref('path/to/image.jpg');
-    constant url = await ref.getDownloadURL();
-
-    render() {
-        const { isLoading, users } = this.state;
-        if (isLoading) {
-            return <ActivityIndicator />;
-        }
-        else {
-            return <FlatList
-                data={users}
-                renderItem={({ item }) => (
-                    <View style={styles.container}>
-                        <Text>{item.Name}</Text>
-                        <Text>{item.Description}</Text>
-                        <Image
-                            source={{ uri: url }}
-                        />
-                    </View>
-                )}
-                keyExtractor={item => item.email}
-            />;
-        }
-    }
-}
-*/
+export default connect(mapStateToProps, mapDispatchToProps)(InventoryContainer);
 
 const styles = StyleSheet.create({
   container: {

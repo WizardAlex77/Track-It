@@ -7,7 +7,7 @@ import {
   ScrollView,
   Keyboard,
   SafeAreaView,
-  TouchableOpacity,
+  TouchableOpacity, Alert
 } from "react-native";
 import Button from "../component/Button";
 import firebaseDb from "../firebaseDb";
@@ -40,62 +40,18 @@ class SignUpContainer extends React.Component {
       });
       this.props.navigation.navigate("Main");
     });
-    /*
-    firebaseDb.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-        .then((userInfo) => {
-          userInfo.user.updateProfile({displayName: this.state.name}).then( () => {console.log(userInfo);});
-          firebaseDb
-              .firestore()
-              .collection("users")
-              .add({
-                name: this.state.name,
-                email: this.state.email,
-                password: this.state.password,
-                avatar: ""
-              })
-              .then(() => {
-                this.setState({
-                  name: "",
-                  email: "",
-                  password: "",
-                  password2: "",
-                });
-
-              })
-              .catch((err) => console.error(err));
-        }) */
   }
-
-   /* firebaseDb
-      .firestore()
-      .collection("users")
-      .add({
-        name: this.state.name,
-        email: this.state.email,
-        password: this.state.password,
-        avatar: ""
-      })
-      .then(() => {
-        this.setState({
-          name: "",
-          email: "",
-          password: "",
-          password2: "",
-        });
-
-      })
-      .catch((err) => console.error(err));
-  }; */
 
   handleRegister = () => {
     Keyboard.dismiss();
     if (
-      this.state.user.name.length &&
-      this.state.user.email.length &&
-      this.state.user.password.length &&
-      this.state.user.password2.length &&
-      this.state.user.password == this.state.password2 &&
-      this.state.user.email.includes("@")
+      this.state.user.name.length > 0 &&
+      this.state.user.email.length > 0 &&
+      this.state.user.password.length > 0 &&
+      this.state.user.password2.length > 0 &&
+      this.state.user.password === this.state.password2 &&
+      this.state.user.email.includes("@") &&
+      this.state.user.password.length >= 6
     ) {
       this.handleCreateUser();
     } else if (
@@ -104,14 +60,17 @@ class SignUpContainer extends React.Component {
       !this.state.user.password.length ||
       !this.state.user.password2.length
     ) {
-      alert("Please fill in all fields");
+      Alert.alert("Certain fields are missing", "Please fill in all fields");
       console.log("Empty field");
     } else if (this.state.user.password != this.state.user.password2) {
-      alert("Passwords do not match");
+      Alert.alert("Passwords do not match", "Please ensure the passwords match");
       console.log("Non matching passwords");
     } else if (!this.state.user.email.includes("@")) {
-      alert("Invalid Email");
+      Alert.alert("Invalid Email", "Please input a valid Email");
       console.log("Invalid Email");
+    } else if (this.state.user.password.length < 6 ) {
+      Alert.alert("Password too short", "Please ensure your password has at least 6 characters");
+      console.log("Password too short");
     }
   };
 
@@ -144,7 +103,7 @@ class SignUpContainer extends React.Component {
                   style={styles.button}
                   onPress={() => {
                     Keyboard.dismiss();
-                    this.handleCreateUser();
+                    this.handleRegister();
                   }}s
               >
                 <Text>Sign Up</Text>

@@ -6,7 +6,6 @@ import {
     Keyboard, ScrollView, SafeAreaView, TouchableOpacity, Image, Alert
 } from "react-native";
 import firebaseDb from "../firebaseDb";
-import TextBox from "../component/TextBox";
 import Button from "../component/Button";
 import { FieldInput, DatePicker } from "../component/StaticInput";
 import { Icon } from "native-base";
@@ -15,19 +14,33 @@ import * as Permissions from "expo-permissions";
 import Fire from "../Fire";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
+import { connect } from 'react-redux';
+import {watchItemData, watchItemExpiry} from '../app-redux';
 
 const firebase = require("firebase");
 require("firebase/firestore");
 
-export default class AddToInventoryContainer extends Component {
+const mapStateToProps = (state) => {
+    return {
+        items: state.items
+    };
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        watchItemData: () => dispatch(watchItemData()),
+        watchItemExpiry: () => dispatch(watchItemExpiry())
+    };
+}
+
+class AddToInventoryContainer extends Component {
     state = {
         name: "",
         type: "",
         location: "",
         quantity: "",
-        expiry: 0,
-        description: "",
+        expiry: null,
+        description: null,
         image: null,
     };
 
@@ -38,7 +51,6 @@ export default class AddToInventoryContainer extends Component {
     getPhotoPermission = async () => {
         if (Constants.platform.ios) {
             const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-
             if (status != "granted") {
                 alert("We need permission to access your camera roll")
             }
@@ -67,7 +79,14 @@ export default class AddToInventoryContainer extends Component {
             Alert.alert("No Location Added", "Please add a location to your item");
         } else if (!this.state.quantity) {
             Alert.alert("No Quantity Added", "Please add a quantity to your item");
-        } else {
+        } else if (this.state.name.length > 12) {
+            Alert.alert("Name of Item is too long!", "Please make sure your item name does not exceed 12 characters");
+        } else if (this.state.location.length > 12) {
+            Alert.alert("Name of Location is too long!", "Please make sure your location name does not exceed 12 characters");
+        } else if (this.state.quantity.length > 12) {
+            Alert.alert("Quantity input is too long!", "Please make sure your quantity does not exceed 12 characters");
+        }
+        else {
             Fire.shared.addItem({
                 name: this.state.name,
                 type: this.state.type,
@@ -88,6 +107,8 @@ export default class AddToInventoryContainer extends Component {
                         description: "",
                         image: null
                     });
+                    this.props.watchItemData();
+                    this.props.watchItemExpiry();
                     this.props.navigation.navigate("Home");
                 })
         }
@@ -100,6 +121,7 @@ export default class AddToInventoryContainer extends Component {
         return <Image source={{ uri: this.state.image }} style={styles.avatar} />
     }
 
+    resetExpireState = () => this.setState({expiry: null})
     handleUpdateName = (name) => this.setState({ name });
     handleUpdateType = (type) => this.setState({ type });
     handleUpdateLocation = (location) => this.setState({ location });
@@ -107,7 +129,7 @@ export default class AddToInventoryContainer extends Component {
     handleUpdateDescription = (description) => this.setState({ description });
     handleUpdateExpiry = (expiry) => {
         var time = expiry.getTime()
-        console.log(time)
+        console.log(time);
         this.setState({ expiry: time });
     }
     handleAddItem = () => firebaseDb
@@ -131,6 +153,8 @@ export default class AddToInventoryContainer extends Component {
                 expiry: "",
                 description: ""
             });
+            this.props.watchItemData();
+            this.props.watchItemExpiry();
             this.props.navigation.navigate("Home");
         })
         .catch((err) => console.error(err));
@@ -140,9 +164,6 @@ export default class AddToInventoryContainer extends Component {
             <SafeAreaView>
                 <ScrollView>
                     <View style={styles.container}>
-                        <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
-                            <Icon name="ios-arrow-round-back" size={32} color="#FFF" />
-                        </TouchableOpacity>
                         <View style={{ marginTop: 20 }}>
                             <Text style={styles.greeting}>Add an Item!</Text>
                         </View>
@@ -174,14 +195,14 @@ export default class AddToInventoryContainer extends Component {
                             <DatePicker
                                 style={{ marginTop: 20 }}
                                 onChange={this.handleUpdateExpiry}
-                                value={this.state.expiry}
+                                clear={this.resetExpireState}
                                 date={this.state.expiry}
                             ></DatePicker>
                             <FieldInput
                                 style={{ marginTop: 20, marginBottom: 30 }}
                                 onChangeText={this.handleUpdateDescription}
                                 value={this.state.description}
-                            >Description</FieldInput>
+                            >Description (Optional)</FieldInput>
                             <Button
                                 style={styles.button}
                                 onPress={() => {
@@ -198,6 +219,8 @@ export default class AddToInventoryContainer extends Component {
         )
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddToInventoryContainer);
 
 const styles = StyleSheet.create({
     container: {
@@ -255,3 +278,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     }
 })
+
+/*
+ <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
+                            <Icon name="ios-arrow-round-back" size={32} color="#FFF" />
+                        </TouchableOpacity>
+ */

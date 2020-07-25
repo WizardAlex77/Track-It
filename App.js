@@ -6,7 +6,6 @@ import { decode, encode } from "base-64";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
 import AddItemContainer from "./container/AddItemContainer";
-import WishListContainer from "./container/WishListContainer";
 import SettingsContainer from "./container/SettingsContainer";
 import WelcomeContainer from "./container/WelcomeContainer";
 import HomeContainer from "./container/HomeContainer";
@@ -16,6 +15,9 @@ import firebaseDb from "./firebaseDb";
 import InventoryContainer from "./container/InventoryContainer";
 import AddToInventoryContainer from "./container/AddToInventoryContainer"
 import AddToWishListContainer from "./container/AddToWishListContainer"
+import { Provider } from 'react-redux';
+import { store } from './app-redux';
+import ExpiringItemsContainer from "./container/ExpiringItemsContainer";
 
 if (!global.btoa) {
   global.btoa = encode;
@@ -99,7 +101,8 @@ export default function App() {
         />
         <MenuTab.Screen
           name="Add Item"
-          children={createAddItemStack}
+          //children={createAddItemStack}
+          component={AddToInventoryContainer}
           options={{
             tabBarIcon: ({ color, size }) => (
               <Icon name="ios-add-circle" color="red" size="40" />
@@ -107,12 +110,12 @@ export default function App() {
           }}
         />
         <MenuTab.Screen
-          name="WishList"
-          component={WishListContainer}
+          name="Expiring Items"
+          component={ExpiringItemsContainer}
           options={{
-            tabBarLabel: "WishList",
+            tabBarLabel: "Expiring Items",
             tabBarIcon: ({ color, size }) => (
-              <Icon name="ios-heart" color={color} size={size} />
+              <Icon name="ios-alert" color={color} size={size} />
             ),
           }}
         />
@@ -131,22 +134,24 @@ export default function App() {
   };
 
   return (
-    <NavigationContainer>
-      <AccountStack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-        initialRouteName="WelcomeSplash"
-      >
-        <AccountStack.Screen
-          name="WelcomeSplash"
-          component={WelcomeContainer}
-        />
-        <AccountStack.Screen name="Log In" component={LogInContainer} />
-        <AccountStack.Screen name="Sign Up" component={SignUpContainer} />
-        <AccountStack.Screen name="Main" children={createBottomTab} />
-      </AccountStack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+        <NavigationContainer>
+          <AccountStack.Navigator
+            screenOptions={{
+              headerShown: false,
+            }}
+            initialRouteName="WelcomeSplash"
+          >
+            <AccountStack.Screen
+              name="WelcomeSplash"
+              component={WelcomeContainer}
+            />
+            <AccountStack.Screen name="Log In" component={LogInContainer} />
+            <AccountStack.Screen name="Sign Up" component={SignUpContainer} />
+            <AccountStack.Screen name="Main" children={createBottomTab} />
+          </AccountStack.Navigator>
+        </NavigationContainer>
+    </Provider>
   );
 }
 
