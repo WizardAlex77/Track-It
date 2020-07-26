@@ -40,10 +40,13 @@ class SignUpContainer extends React.Component {
           household: user.email,
           householdName: user.name
         }).then(() => {  this.setState({
-          name: "",
-          email: "",
-          password: "",
-          password2: "",
+          user: {
+            name: "",
+            email: "",
+            password: "",
+            password2: "",
+            avatar: null
+          }
         });
           this.props.navigation.navigate("Main");})
       }).catch(function(error) {
