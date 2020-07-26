@@ -8,12 +8,16 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   SafeAreaView,
+    Alert
 } from "react-native";
 import firebaseDb from "../firebaseDb";
 import Button from "../component/Button";
-import PasswordTextBox from "../component/PasswordTextBox";
+import Fire from "../Fire";
 import {StaticEmailInput, StaticPasswordInput} from "../component/StaticInput";
 import {Icon, Input, Item, Label} from "native-base";
+
+const firebase = require("firebase");
+require("firebase/firestore");
 
 class LogInContainer extends Component {
   state = {
@@ -26,21 +30,48 @@ class LogInContainer extends Component {
   handleSignIn = (email, password) =>
     firebaseDb.auth()
         .signInWithEmailAndPassword(email, password)
-        .then( (value) => {
-              this.setState({
+        .then( (userInfo) => {
+            let household = "";
+            let householdName = "";
+
+            firebaseDb
+                .firestore()
+                .collection("users")
+                .doc(String(email))
+                .get()
+                .then(doc => {
+                   household = doc.get("household");
+                   householdName = doc.get("householdName")
+
+                    userInfo.user.updateProfile({ photoURL: household }).then(() => {
+                        console.log("updated household to be " + household);
+                        this.props.navigation.navigate("Main");
+                        if (doc.get("status") === "justJoined") {
+                            firebaseDb.firestore().collection("users").doc(String(email)).set({ status: 'nil' }, { merge: true }).then(() => Alert.alert("Your HouseHold Application has been approved", "You are now part of " + householdName + "'s household!"));
+                        } else if (doc.get('status') === "removed") {
+                            firebaseDb.firestore().collection("users").doc(String(email)).set({ status: 'nil' }, { merge: true }).then(() => Alert.alert("You have been removed from your previous household", "You have been returned to your own household"));
+                        }
+                    });
+                   console.log("updated fake photoUrl to" + household);
+
+                });
+            this.setState({
                 email: "",
                 password: ""
-              });
-              this.props.navigation.navigate("Main");
+            });
             }
         )
-        .catch((err) => alert("No Such Account"));
+        .catch((err) => Alert.alert("No Such Account", "Please enter a valid account"));
 
   render() {
     return (
         <SafeAreaView>
             <ScrollView>
                 <KeyboardAvoidingView behavior="padding" style={styles.container}>
+                    <Image
+                        style={styles.background}
+                        source={require("../assets/log_in_background.png")}
+                    />
                     <Image
                         style={styles.logo}
                         source={require("../assets/logo.png")}
@@ -62,7 +93,7 @@ class LogInContainer extends Component {
                                 ) {
                                   this.handleSignIn(this.state.email, this.state.password);
                                 } else {
-                                  alert("Please enter username and password");
+                                  Alert.alert("Empty fields","Please enter username and password");
                                 }
                               }}
                         >
@@ -109,12 +140,19 @@ const styles = StyleSheet.create({
     },
     button: {
         marginHorizontal: 30,
-        backgroundColor: "#E9446A",
+        backgroundColor: "#70bee2",
         borderRadius: 4,
         height: 52,
         alignItems: "center",
         justifyContent: "center"
     },
+    background: {
+        position: 'absolute',
+        width: 350,
+        height: 500,
+        top: -170,
+        resizeMode: "contain",
+    }
 })
 
 export default LogInContainer;

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Text, View, StyleSheet, Image, TouchableOpacity} from "react-native";
+import {Text, View, StyleSheet, Image, TouchableOpacity, Keyboard} from "react-native";
 import firebaseDb from "../firebaseDb";
 import Button from "../component/Button";
 import Constants from 'expo-constants';
@@ -13,7 +13,8 @@ require("firebase/firestore");
 export default class SettingsContainer extends Component {
     state = {
         userAvatar: null,
-        userEmail : null
+        userEmail : null,
+        userName: null
     };
 
     componentDidMount() {
@@ -25,6 +26,7 @@ export default class SettingsContainer extends Component {
             .then(doc => {
                 this.setState({ userAvatar: doc.get("avatar") })
                 this.setState({ userEmail: doc.get("email") })
+                this.setState({userName: doc.get("name")})
             });
     }
 
@@ -64,9 +66,19 @@ export default class SettingsContainer extends Component {
     render() {
         return (
             <View style={styles.container}>
-                    <TouchableOpacity style={[styles.avatarPlaceHolder, {alignSelf: 'center'}]} onPress={this.handlePickAvatar}>
-                        <Image style={styles.avatar} source={this.state.userAvatar ? { uri: this.state.userAvatar } : require("../assets/dummy-avatar.jpg") } />
-                    </TouchableOpacity>
+
+                <Image
+                    style={styles.background1}
+                    source={require("../assets/settingBackground2.png")}
+                />
+                <Image
+                    style={styles.background2}
+                    source={require("../assets/settingBackground1.png")}
+                />
+
+                <TouchableOpacity style={[styles.avatarPlaceHolder, {alignSelf: 'center'}]} onPress={this.handlePickAvatar}>
+                    <Image style={styles.avatar} source={this.state.userAvatar ? { uri: this.state.userAvatar } : require("../assets/dummy-avatar.jpg") } />
+                </TouchableOpacity>
                 <View style={styles.form}>
                     <Button
                         onPress={this.handlePickAvatar}
@@ -74,6 +86,24 @@ export default class SettingsContainer extends Component {
                     >
                         <Text>Change Profile Picture</Text>
                     </Button>
+
+                    <Button
+                        onPress={() => {
+                            Keyboard.dismiss();
+                            this.props.navigation.navigate("householdSettings");
+                        }}
+                        style={styles.button}
+                    >
+                        <Text>Household Settings</Text>
+                    </Button>
+
+                    <Button
+                        onPress={this.handlePickAvatar}
+                        style={styles.button}
+                    >
+                        <Text>Help</Text>
+                    </Button>
+
                     <Button
                         onPress={this.handleSignOut}
                         style={styles.button}
@@ -99,7 +129,7 @@ const styles = StyleSheet.create({
     form: {
         marginBottom: 48,
         marginHorizontal: 30,
-        marginTop: "20%"
+        marginTop: "10%"
     },
     logo: {
         marginTop: "20%",
@@ -110,7 +140,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginHorizontal: 30,
-        backgroundColor: "#E9446A",
+        backgroundColor: "#70bee2",
         borderRadius: 4,
         height: 52,
         alignItems: "center",
@@ -130,5 +160,21 @@ const styles = StyleSheet.create({
         height: 100,
         borderRadius: 50,
         position: 'absolute'
+    },
+    background1: {
+        position: 'absolute',
+        width: 350,
+        height: 500,
+        top: -100,
+        left: -10,
+        resizeMode: "contain",
+    },
+    background2: {
+        position: 'absolute',
+        width: 350,
+        height: 500,
+        top: -100,
+        left: -30,
+        resizeMode: "contain",
     },
 })

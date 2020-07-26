@@ -95,6 +95,7 @@ class AddToInventoryContainer extends Component {
                 expiry: this.state.expiry,
                 description: this.state.description,
                 owner: firebaseDb.auth().currentUser.displayName,
+                ownerEmail: firebaseDb.auth().currentUser.email,
                 localUri: this.state.image
             })
                 .then(ref => {
@@ -164,6 +165,16 @@ class AddToInventoryContainer extends Component {
             <SafeAreaView>
                 <ScrollView>
                     <View style={styles.container}>
+
+                        <Image
+                            style={styles.background1}
+                            source={require("../assets/settingBackground2.png")}
+                        />
+                        <Image
+                            style={styles.background2}
+                            source={require("../assets/settingBackground1.png")}
+                        />
+
                         <View style={{ marginTop: 20 }}>
                             <Text style={styles.greeting}>Add an Item!</Text>
                         </View>
@@ -260,7 +271,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginHorizontal: 30,
-        backgroundColor: "#e9446a",
+        backgroundColor: "#70bee2",
         borderRadius: 4,
         height: 52,
         alignItems: "center",
@@ -276,7 +287,23 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(21,22,48,0.1)",
         alignItems: 'center',
         justifyContent: 'center'
-    }
+    },
+    background1: {
+        position: 'absolute',
+        width: 350,
+        height: 500,
+        top: -250,
+        left: -10,
+        resizeMode: "contain",
+    },
+    background2: {
+        position: 'absolute',
+        width: 350,
+        height: 500,
+        top: -250,
+        left: -30,
+        resizeMode: "contain",
+    },
 })
 
 /*

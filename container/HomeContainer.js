@@ -40,25 +40,39 @@ class Home extends Component {
     isLoading: true,
     items: [],
     isModalVisible: false,
-    modalItem: null
+    modalItem: null,
   };
 
   arrayHolder = [];
 
   componentDidMount() {
-    this.props.watchItemData();
-    firebaseDb.firestore().collection("items")
+    firebaseDb.firestore().collection('items')
       .get().then((querySnapshot) => {
         const results = [];
         querySnapshot.docs.map((documentSnapshot) =>
           results.push(documentSnapshot.data())
         );
-        this.setState({
-          isLoading: false,
-          Username: firebaseDb.auth().currentUser.displayName,
-        });
-        console.log("loaded " + this.state.Username);
       }).catch((err) => console.error(err));
+    firebaseDb.firestore().collection('items')
+        .get().then((querySnapshot) => {
+      const results = [];
+      querySnapshot.docs.map((documentSnapshot) =>
+          results.push(documentSnapshot.data())
+      );
+    }).catch((err) => console.error(err));
+    this.props.watchItemData();
+    firebaseDb.firestore().collection('items')
+        .get().then((querySnapshot) => {
+      const results = [];
+      querySnapshot.docs.map((documentSnapshot) =>
+          results.push(documentSnapshot.data())
+      );
+      this.setState({
+        isLoading: false,
+        Username: firebaseDb.auth().currentUser.displayName,
+      });
+      console.log("loaded " + this.state.Username + " with pURL of " + firebaseDb.auth().currentUser.photoURL + " (Home)");
+    }).catch((err) => console.error(err));
   }
 
   searchFilterFunction = (text) => {
@@ -105,8 +119,8 @@ class Home extends Component {
             <View>
               <Text style={styles.name}>{item.name}</Text>
               <Text style={styles.locationStamp}>
-                {" "}
-                <Text>Location: </Text> {item.location}
+                {""}
+                <Text>Location: </Text>{item.location}
               </Text>
             </View>
             <TouchableOpacity
@@ -138,7 +152,7 @@ class Home extends Component {
 
           <Modal isVisible={this.state.isModalVisible}>
             <View style={{flex: 1, justifyContent: 'center'}}>
-              <View style={{width: 250, height: 430, alignSelf: 'center', backgroundColor: '#f3a0a0', paddingVertical: 15,
+              <View style={{width: 250, height: 430, alignSelf: 'center', backgroundColor: "#b3d7ea", paddingVertical: 15,
                 borderRadius: 15, alignItems: 'center'}}>
                 <Image source={this.state.modalItem ? { uri: this.state.modalItem.image } : require("../assets/logo.png")} style={styles.modalAvatar} />
                 <Text style={{fontWeight: "bold", fontSize: 24, marginBottom: 10}}>{this.state.modalItem ? this.state.modalItem.name : "NIL"}</Text>
@@ -160,7 +174,7 @@ class Home extends Component {
                     }
                 >
                   <Text style={{ textAlign: 'center',
-                    color: '#6d6a6a',
+                    color: "rgba(0,0,0,0.73)",
                     fontWeight: '700',
                   }}>
                     Close
@@ -173,14 +187,17 @@ class Home extends Component {
           <View style={styles.header}>
             <Text style={styles.headerTitle}>All Items</Text>
           </View>
+          {this.props.homeDisplay.length > 0 && <FlatList
+              style={styles.feed}
+              data={this.props.homeDisplay}
+              renderItem={({ item }) => this.renderItem(item)}
+              keyExtractor={(item) => item.name}
+              ListHeaderComponent={this.renderHeader}
+          />}
+          {this.props.homeDisplay.length === 0 && <Text style={{alignSelf: 'center', top: 170, color: "rgba(0,0,0,0.28)"}}>
+            There are currently no items
+          </Text>}
 
-          <FlatList
-            style={styles.feed}
-            data={this.props.homeDisplay}
-            renderItem={({ item }) => this.renderItem(item)}
-            keyExtractor={(item) => item.name}
-            ListHeaderComponent={this.renderHeader}
-          />
 
         </View>
       );
@@ -197,20 +214,20 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingTop: 30,
-    paddingBottom: 16,
+    paddingBottom: 12,
     backgroundColor: "#FFF",
     alignItems: "center",
     justifyContent: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#454D65",
+    borderBottomColor: "#d7d8ec",
     shadowOffset: { height: 5 },
     shadowRadius: 15,
     shadowOpacity: 0.2,
     zIndex: 10,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "500",
+    fontSize: 25,
+    fontWeight: "600",
   },
   feed: {
     marginHorizontal: 16,
@@ -220,27 +237,27 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 8,
     flexDirection: "row",
-    marginVertical: 8,
+    marginTop: 10,
   },
   avatar: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
     borderRadius: 18,
-    marginRight: 16,
+    marginRight: 14,
   },
   modalAvatar: {
-    width: 150,
-    height: 150,
+    width: 170,
+    height: 170,
     borderRadius: 18,
-    marginVertical: "10%"
+    marginVertical: "7%"
   },
   name: {
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: "500",
     color: "#454D65",
   },
   locationStamp: {
-    fontSize: 11,
+    fontSize: 13,
     color: "#C4C6CE",
     marginTop: 4,
   },

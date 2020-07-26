@@ -31,27 +31,39 @@ class ExpiringItemsContainer extends Component {
     state = {
         isLoading: true,
         isModalVisible: false,
-        modalItem: null
+        modalItem: null,
     };
 
     arrayHolder = [];
 
     componentDidMount() {
-        this.props.watchItemExpiry();
-        firebaseDb.firestore().collection("items")
+        firebaseDb.firestore().collection('items')
             .get().then((querySnapshot) => {
-                const results = [];
-                querySnapshot.docs.map((documentSnapshot) =>
-                    results.push(documentSnapshot.data())
-                );
-                this.setState({
-                    isLoading: false,
-                    items: results,
-                    Username: firebaseDb.auth().currentUser.displayName,
-                });
-                this.arrayHolder = results;
-                console.log("loaded " + this.state.Username);
-            }).catch((err) => console.error(err));
+            const results = [];
+            querySnapshot.docs.map((documentSnapshot) =>
+                results.push(documentSnapshot.data())
+            );
+        }).catch((err) => console.error(err));
+        firebaseDb.firestore().collection('items')
+            .get().then((querySnapshot) => {
+            const results = [];
+            querySnapshot.docs.map((documentSnapshot) =>
+                results.push(documentSnapshot.data())
+            );
+        }).catch((err) => console.error(err));
+        this.props.watchItemExpiry();
+        firebaseDb.firestore().collection('items')
+            .get().then((querySnapshot) => {
+            const results = [];
+            querySnapshot.docs.map((documentSnapshot) =>
+                results.push(documentSnapshot.data())
+            );
+            this.setState({
+                isLoading: false,
+                Username: firebaseDb.auth().currentUser.displayName,
+            });
+            console.log("loaded " + this.state.Username + " with pURL of " + firebaseDb.auth().currentUser.photoURL + " (Expiry)");
+        }).catch((err) => console.error(err));
     }
 
     searchFilterFunction = (text) => {
@@ -84,8 +96,36 @@ class ExpiringItemsContainer extends Component {
     };
 
     renderItem = (item) => {
+        let typeOfWarning = "#d0ffb5";
+        let locationStampz = "rgba(0,0,0,0.4)";
+        let message = "";
+        let mColor = "";
+        let currentMoment = new Date();
+        let expiryDateDiff = item.expiry.toDate() - currentMoment;
+        if (expiryDateDiff <= 0) {
+            typeOfWarning = "rgba(255,255,255,0.73)";
+            locationStampz = "rgba(0,0,0,0.4)";
+            mColor = typeOfWarning;
+            message = "Expired";
+        } else if (Math.ceil(expiryDateDiff/(1000*60*60*24)) <= 1) {
+            typeOfWarning = "#fab9b9";
+            locationStampz = "rgba(0,0,0,0.4)";
+            mColor = typeOfWarning;
+            message = "Expiring tomorrow"
+        } else if (Math.ceil(expiryDateDiff/(1000*60*60*24)) <= 7) {
+            typeOfWarning = "#f5e7af";
+            locationStampz = "rgba(0,0,0,0.4)";
+            mColor = typeOfWarning;
+            message = "Expiring in a week"
+        } else {
+            typeOfWarning = "#d0ffb5";
+            locationStampz = "rgba(0,0,0,0.4)";
+            mColor = typeOfWarning;
+            message = "Not expiring soon"
+        }
+            //<Text>Expiry Date: </Text>{item.expiry.toDate().toString().substring(4,15)}
         return (
-            <View style={styles.feedItem}>
+            <View style={[styles.feedItem, {backgroundColor: typeOfWarning}]}>
                 <Image source={{ uri: item.image }} style={styles.avatar} />
                 <View style={{ flex: 1 }}>
                     <View
@@ -97,17 +137,15 @@ class ExpiringItemsContainer extends Component {
                     >
                         <View>
                             <Text style={styles.name}>{item.name}</Text>
-                            <Text style={styles.locationStamp}>
-                                {" "}
-                                <Text>Expiry Date: </Text> {item.expiry.toDate().toString().substring(4,15)}
+                            <Text style={[styles.locationStamp, {color: locationStampz}]}>
+                                {message}
                             </Text>
                         </View>
                         <TouchableOpacity
                             onPress={() => {
-                                this.setState({ modalItem: item});
+                                this.setState({ modalItem: item, modalColor: mColor});
                                 this.toggleModal();
-                            }
-                            }
+                            }}
                         >
                             <Icon name="ios-more" size={24} color="#73788B" />
                         </TouchableOpacity>
@@ -124,6 +162,7 @@ class ExpiringItemsContainer extends Component {
     deleteItem = () => {
         firebaseDb.firestore()
             .collection("items")
+            .doc(firebase.auth().currentUser.photoURL).collection('items')
             .doc(this.state.modalItem.uid)
             .delete()
             .then(() => {
@@ -138,7 +177,7 @@ class ExpiringItemsContainer extends Component {
     }
 
     render() {
-        const { isLoading } = this.state;
+        const { isLoading, modalColor } = this.state;
         if (isLoading) {
             return <ActivityIndicator />;
         } else {
@@ -147,13 +186,14 @@ class ExpiringItemsContainer extends Component {
 
                     <Modal isVisible={this.state.isModalVisible}>
                         <View style={{flex: 1, justifyContent: 'center'}}>
-                            <View style={{width: 250, height: 470, alignSelf: 'center', backgroundColor: '#f3a0a0', paddingVertical: 15,
+                            <View style={{width: 250, height: 500, alignSelf: 'center', backgroundColor: modalColor, paddingVertical: 15,
                                 borderRadius: 15, alignItems: 'center'}}>
                                 <Image source={this.state.modalItem ? { uri: this.state.modalItem.image } : require("../assets/logo.png")} style={styles.modalAvatar} />
                                 <Text style={{fontWeight: "bold", fontSize: 24, marginBottom: 10}}>{this.state.modalItem ? this.state.modalItem.name : "NIL"}</Text>
                                 <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Location: </Text>{this.state.modalItem ? this.state.modalItem.location : "NIL"}</Text>
                                 <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Quantity: </Text>{this.state.modalItem ? this.state.modalItem.quantity : "NIL"}</Text>
                                 <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Owner: </Text>{this.state.modalItem ? this.state.modalItem.owner : "NIL"}</Text>
+                                <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Expiry Date: </Text>{this.state.modalItem ? (this.state.modalItem.expiry == "None" ? "None" : this.state.modalItem.expiry.toDate().toString().substring(4,15) ): "NIL"}</Text>
                                 <Text style={{alignSelf: 'flex-start', marginLeft: "12%"}}><Text style={{fontWeight: "bold"}}>Details: </Text>{this.state.modalItem ? this.state.modalItem.description : "NIL"}</Text>
                                 <TouchableOpacity
                                     style={{
@@ -168,7 +208,7 @@ class ExpiringItemsContainer extends Component {
                                     }
                                 >
                                     <Text style={{ textAlign: 'center',
-                                        color: '#6d6a6a',
+                                        color: "rgba(0,0,0,0.73)",
                                         fontWeight: '700',
                                     }}>
                                         Delete
@@ -178,7 +218,7 @@ class ExpiringItemsContainer extends Component {
                                     style={{
                                         backgroundColor: '#e5d84c',
                                         paddingVertical: 15,
-                                        marginTop: 10,
+                                        marginTop: 7,
                                         borderRadius: 15,
                                         width: 150
                                     }}
@@ -187,7 +227,7 @@ class ExpiringItemsContainer extends Component {
                                     }
                                 >
                                     <Text style={{ textAlign: 'center',
-                                        color: '#6d6a6a',
+                                        color: "rgba(0,0,0,0.73)",
                                         fontWeight: '700',
                                     }}>
                                         Close
@@ -201,13 +241,17 @@ class ExpiringItemsContainer extends Component {
                         <Text style={styles.headerTitle}>Expiry Chart</Text>
                     </View>
 
+                    {this.props.expiryDisplay.length > 0 &&
                     <FlatList
                         style={styles.feed}
                         data={this.props.expiryDisplay}
                         renderItem={({ item }) => this.renderItem(item)}
                         keyExtractor={(item) => item.name}
                         ListHeaderComponent={this.renderHeader}
-                    />
+                    />}
+                    {this.props.expiryDisplay.length === 0 && <Text style={{alignSelf: 'center', top: 170, color: "rgba(0,0,0,0.28)"}}>
+                        There are currently no items expiring
+                    </Text>}
                 </View>
             );
         }
@@ -223,51 +267,51 @@ const styles = StyleSheet.create({
     },
     header: {
         paddingTop: 30,
-        paddingBottom: 16,
+        paddingBottom: 12,
         backgroundColor: "#FFF",
         alignItems: "center",
         justifyContent: "center",
         borderBottomWidth: 1,
-        borderBottomColor: "#454D65",
+        borderBottomColor: "#d7d8ec",
         shadowOffset: { height: 5 },
         shadowRadius: 15,
         shadowOpacity: 0.2,
         zIndex: 10,
     },
     headerTitle: {
-        fontSize: 20,
-        fontWeight: "500",
+        fontSize: 25,
+        fontWeight: "600",
     },
     feed: {
         marginHorizontal: 16,
     },
     feedItem: {
-        backgroundColor: "#FFF",
+        //backgroundColor: "#FFF",
         borderRadius: 5,
         padding: 8,
         flexDirection: "row",
-        marginVertical: 8,
+        marginTop: 10,
     },
     avatar: {
-        width: 36,
-        height: 36,
+        width: 40,
+        height: 40,
         borderRadius: 18,
-        marginRight: 16,
+        marginRight: 14,
     },
     modalAvatar: {
-        width: 150,
-        height: 150,
+        width: 170,
+        height: 170,
         borderRadius: 18,
-        marginVertical: "10%"
+        marginVertical: "7%"
     },
     name: {
-        fontSize: 15,
+        fontSize: 17,
         fontWeight: "500",
         color: "#454D65",
     },
     locationStamp: {
-        fontSize: 11,
-        color: "#C4C6CE",
+        fontSize: 13,
+        //color: "#C4C6CE",
         marginTop: 4,
     },
 });

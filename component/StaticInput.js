@@ -13,6 +13,13 @@ export const StaticInput = props => (
     </View>
 )
 
+export const StaticInput2 = props => (
+    <View style={props.style}>
+        <Text style={styles.inputTitle}>{props.children}</Text>
+        <TextInput style={styles.input2} autoCapitalize="none" keyboardType="email-address" onChangeText={props.onChangeText} value={props.value} placeholder="Type here"/>
+    </View>
+)
+
 export const StaticPasswordInput = props => (
     <View style={props.style}>
         <Text style={styles.inputTitle}>{props.children}</Text>
@@ -79,6 +86,16 @@ const styles = StyleSheet.create({
     input: {
         borderBottomColor: "#8A8F9E",
         borderBottomWidth: StyleSheet.hairlineWidth,
+        height: 40,
+        fontSize: 15,
+        color: "#161f3d"
+    },
+    input2: {
+        borderWidth: 2,
+        borderRadius: 10 ,
+        borderColor: 'rgb(121,130,167)',
+        backgroundColor : "rgba(252,241,241,0.43)",
+        textAlign: 'center',
         height: 40,
         fontSize: 15,
         color: "#161f3d"

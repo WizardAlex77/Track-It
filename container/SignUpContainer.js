@@ -7,13 +7,14 @@ import {
   ScrollView,
   Keyboard,
   SafeAreaView,
-  TouchableOpacity, Alert
+  TouchableOpacity, Alert, Image
 } from "react-native";
 import Button from "../component/Button";
 import firebaseDb from "../firebaseDb";
 import {StaticInput, StaticPasswordInput, StaticEmailInput} from "../component/StaticInput";
 import {Icon, Input, Item, Label} from "native-base";
 import Fire from "../Fire"
+import firebase from "firebase";
 
 class SignUpContainer extends React.Component {
   state = {
@@ -26,35 +27,53 @@ class SignUpContainer extends React.Component {
      }
   };
 
+  createProfile = async (user) => {
+    try {
+      firebase.auth().createUserWithEmailAndPassword(user.email, user.password).then((userInfo) => {
+        userInfo.user.updateProfile({ displayName: user.name , photoURL: user.email}).then(() => { console.log(userInfo); })
+        console.log("created successfully")
+        let db = firebaseDb.firestore().collection("users").doc(String(user.email));
+        db.set({
+          name: user.name,
+          email: user.email,
+          avatar: null,
+          household: user.email,
+          householdName: user.name
+        }).then(() => {  this.setState({
+          name: "",
+          email: "",
+          password: "",
+          password2: "",
+        });
+          this.props.navigation.navigate("Main");})
+      }).catch(function(error) {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        if (errorCode == 'auth/email-already-in-use') {
+          Alert.alert('This email is already in use', "Please use another email");
+        } else {
+          alert(errorMessage);
+        }
+        console.log(error);
+      });
+
+    } catch (error) {
+      alert("Error :" + error);
+    }
+  }
+
   handleUpdateName = (name) => this.setState({ user: { ...this.state.user, name }});
   handleUpdateEmail = (email) => this.setState({ user: { ...this.state.user, email }});
   handleUpdatePassword = (password) => this.setState({ user: { ...this.state.user, password }});
   handleUpdatePassword2 = (password2) => this.setState({ user: { ...this.state.user, password2 }});
   handleCreateUser = () => {
-    Fire.shared.createProfile(this.state.user).then(() => {
-      this.setState({
-        name: "",
-        email: "",
-        password: "",
-        password2: "",
-      });
-      this.props.navigation.navigate("Main");
-    });
+    this.createProfile(this.state.user).then(()=>{});
   }
 
   handleRegister = () => {
     Keyboard.dismiss();
     if (
-      this.state.user.name.length > 0 &&
-      this.state.user.email.length > 0 &&
-      this.state.user.password.length > 0 &&
-      this.state.user.password2.length > 0 &&
-      this.state.user.password === this.state.password2 &&
-      this.state.user.email.includes("@") &&
-      this.state.user.password.length >= 6
-    ) {
-      this.handleCreateUser();
-    } else if (
       !this.state.user.name.length ||
       !this.state.user.email.length ||
       !this.state.user.password.length ||
@@ -71,6 +90,8 @@ class SignUpContainer extends React.Component {
     } else if (this.state.user.password.length < 6 ) {
       Alert.alert("Password too short", "Please ensure your password has at least 6 characters");
       console.log("Password too short");
+    } else {
+      this.handleCreateUser();
     }
   };
 
@@ -80,6 +101,11 @@ class SignUpContainer extends React.Component {
         <SafeAreaView>
         <ScrollView>
           <KeyboardAvoidingView behavior="padding" style={styles.container}>
+
+            <Image
+                style={styles.background}
+                source={require("../assets/log_in_background.png")}
+            />
 
             <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
               <Icon name="ios-arrow-round-back" size={32} color="#FFF" />
@@ -149,7 +175,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginHorizontal: 30,
-    backgroundColor: "#E9446A",
+    backgroundColor: "#70bee2",
     borderRadius: 4,
     height: 52,
     alignItems: "center",
@@ -165,6 +191,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(21,22,48,0.1)",
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  background: {
+    position: 'absolute',
+    width: 350,
+    height: 500,
+    top: -160,
+    resizeMode: "contain",
   }
 })
 

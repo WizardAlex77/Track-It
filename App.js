@@ -18,6 +18,10 @@ import AddToWishListContainer from "./container/AddToWishListContainer"
 import { Provider } from 'react-redux';
 import { store } from './app-redux';
 import ExpiringItemsContainer from "./container/ExpiringItemsContainer";
+import joinHouseholdContainer from "./container/joinHouseholdContainer";
+import joinRequestsContainer from "./container/joinRequestsContainer";
+import householdSettingsContainer from "./container/householdSettingsContainer";
+import memberListContainer from "./container/memberListContainer";
 
 if (!global.btoa) {
   global.btoa = encode;
@@ -36,13 +40,29 @@ const AddItemStack = createStackNavigator();
 export default function App() {
     const createSettingStack = () => {
         return (
-            <SettingStack.Navigator initialRouteName="Settings">
+            <SettingStack.Navigator initialRouteName="Settings" headerMode="none">
                 <SettingStack.Screen
                     name="Settings"
                     component={SettingsContainer}
                     options={{
                         headerShown: false
                     }}
+                />
+                <SettingStack.Screen
+                name="householdSettings"
+                component={householdSettingsContainer}
+                />
+                <SettingStack.Screen
+                    name="JoinOther"
+                    component={joinHouseholdContainer}
+                />
+                <SettingStack.Screen
+                    name="requests"
+                    component={joinRequestsContainer}
+                />
+                <SettingStack.Screen
+                    name="memberList"
+                    component={memberListContainer}
                 />
             </SettingStack.Navigator>
         )
@@ -75,7 +95,7 @@ export default function App() {
       <MenuTab.Navigator
         initialRouteName="Home"
         tabBarOptions={{
-          activeTintColor: "#e91e63",
+          activeTintColor: "#70bee2",
           showLabel: false,
         }}
       >
@@ -105,7 +125,7 @@ export default function App() {
           component={AddToInventoryContainer}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Icon name="ios-add-circle" color="red" size="40" />
+              <Icon name="ios-add-circle" color={color} size={40} />
             ),
           }}
         />
