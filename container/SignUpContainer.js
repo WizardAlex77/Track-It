@@ -7,7 +7,7 @@ import {
   ScrollView,
   Keyboard,
   SafeAreaView,
-  TouchableOpacity, Alert, Image
+  TouchableOpacity, Alert, Image, ActivityIndicator
 } from "react-native";
 import Button from "../component/Button";
 import firebaseDb from "../firebaseDb";
@@ -18,6 +18,7 @@ import firebase from "firebase";
 
 class SignUpContainer extends React.Component {
   state = {
+    loading: false,
      user: {
        name: "",
        email: "",
@@ -48,6 +49,7 @@ class SignUpContainer extends React.Component {
             avatar: null
           }
         });
+        this.setState({loading: false})
           this.props.navigation.navigate("Main");})
       }).catch(function(error) {
         // Handle Errors here.
@@ -95,54 +97,73 @@ class SignUpContainer extends React.Component {
       console.log("Password too short");
     } else {
       this.handleCreateUser();
+      this.setState({loading: true})
     }
   };
 
   render() {
-    return (
+    const {loading} = this.state;
+    if (loading) {
+      return (
+      <View style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 70
+      }}>
+        <ActivityIndicator />
+      </View>
+      )
+    } else {
+      return (
+          <SafeAreaView>
+            <ScrollView>
+              <KeyboardAvoidingView behavior="padding" style={styles.container}>
 
-        <SafeAreaView>
-        <ScrollView>
-          <KeyboardAvoidingView behavior="padding" style={styles.container}>
+                <Image
+                    style={styles.background}
+                    source={require("../assets/log_in_background.png")}
+                />
 
-            <Image
-                style={styles.background}
-                source={require("../assets/log_in_background.png")}
-            />
+                <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
+                  <Icon name="ios-arrow-round-back" size={32} color="#FFF"/>
+                </TouchableOpacity>
 
-            <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
-              <Icon name="ios-arrow-round-back" size={32} color="#FFF" />
-            </TouchableOpacity>
+                <View style={styles.greeting}>
+                  <Text
+                      style={{fontSize: 35, padding: "5%", fontWeight: "bold"}}
+                  >
+                    Let's get started!
+                  </Text>
+                  <Text>Create an account to use our features</Text>
+                </View>
 
-            <View style={styles.greeting}>
-                <Text
-                  style={{ fontSize: 35, padding: "5%", fontWeight: "bold" }}
-                >
-                  Let's get started!
-                </Text>
-                <Text>Create an account to use our features</Text>
-            </View>
+                <View style={styles.form}>
+                  <StaticInput style={{marginTop: 32}} onChangeText={this.handleUpdateName}
+                               value={this.state.user.name}>Name</StaticInput>
+                  <StaticEmailInput style={{marginTop: 32}} onChangeText={this.handleUpdateEmail}
+                                    value={this.state.user.email}>Email</StaticEmailInput>
+                  <StaticPasswordInput style={{marginTop: 32}} onChangeText={this.handleUpdatePassword}
+                                       value={this.state.user.password}>Password</StaticPasswordInput>
+                  <StaticPasswordInput style={{marginTop: 32, marginBottom: 30}}
+                                       onChangeText={this.handleUpdatePassword2} value={this.state.user.password2}>Re-enter
+                    Password</StaticPasswordInput>
+                  <Button
+                      style={styles.button}
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        this.handleRegister();
+                      }} s
+                  >
+                    <Text>Sign Up</Text>
+                  </Button>
 
-            <View style={styles.form}>
-              <StaticInput style={{marginTop: 32}} onChangeText={this.handleUpdateName} value={this.state.user.name}>Name</StaticInput>
-              <StaticEmailInput style={{marginTop: 32}} onChangeText={this.handleUpdateEmail} value={this.state.user.email}>Email</StaticEmailInput>
-              <StaticPasswordInput style={{marginTop: 32}} onChangeText={this.handleUpdatePassword} value={this.state.user.password}>Password</StaticPasswordInput>
-              <StaticPasswordInput style={{marginTop: 32, marginBottom: 30}} onChangeText={this.handleUpdatePassword2} value={this.state.user.password2}>Re-enter Password</StaticPasswordInput>
-              <Button
-                  style={styles.button}
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    this.handleRegister();
-                  }}s
-              >
-                <Text>Sign Up</Text>
-              </Button>
-
-            </View>
-          </KeyboardAvoidingView>
-          </ScrollView>
-        </SafeAreaView>
-    );
+                </View>
+              </KeyboardAvoidingView>
+            </ScrollView>
+          </SafeAreaView>
+      );
+    }
   }
 }
 
