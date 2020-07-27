@@ -46,6 +46,9 @@ class Home extends Component {
   arrayHolder = [];
 
   componentDidMount() {
+    this.setState({isLoading: true})
+    console.log('mounted home component');
+    this.props.watchItemData();
     firebaseDb.firestore().collection('items')
       .get().then((querySnapshot) => {
         const results = [];
@@ -60,7 +63,6 @@ class Home extends Component {
           results.push(documentSnapshot.data())
       );
     }).catch((err) => console.error(err));
-    this.props.watchItemData();
     firebaseDb.firestore().collection('items')
         .get().then((querySnapshot) => {
       const results = [];

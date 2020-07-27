@@ -31,26 +31,28 @@ class SignUpContainer extends React.Component {
   createProfile = async (user) => {
     try {
       firebase.auth().createUserWithEmailAndPassword(user.email, user.password).then((userInfo) => {
-        userInfo.user.updateProfile({ displayName: user.name , photoURL: user.email}).then(() => { console.log(userInfo); })
-        console.log("created successfully")
-        let db = firebaseDb.firestore().collection("users").doc(String(user.email));
-        db.set({
-          name: user.name,
-          email: user.email,
-          avatar: null,
-          household: user.email,
-          householdName: user.name
-        }).then(() => {  this.setState({
-          user: {
-            name: "",
-            email: "",
-            password: "",
-            password2: "",
-            avatar: null
-          }
-        });
-        this.setState({loading: false})
-          this.props.navigation.navigate("Main");})
+        userInfo.user.updateProfile({ displayName: user.name , photoURL: user.email}).then(() => {
+          console.log(userInfo);
+          console.log("created successfully")
+          let db = firebaseDb.firestore().collection("users").doc(String(user.email));
+          db.set({
+            name: user.name,
+            email: user.email,
+            avatar: null,
+            household: user.email,
+            householdName: user.name
+          }).then(() => {  this.setState({
+            user: {
+              name: "",
+              email: "",
+              password: "",
+              password2: "",
+              avatar: null
+            }
+          });
+            this.setState({loading: false})
+            this.props.navigation.navigate("Main");})
+        }, (err) => Alert.alert("An error has occurred", "Please try again")).catch(err => console.log(err))
       }).catch(function(error) {
         // Handle Errors here.
         const errorCode = error.code;

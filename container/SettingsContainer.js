@@ -98,7 +98,7 @@ export default class SettingsContainer extends Component {
                     </Button>
 
                     <Button
-                        onPress={this.handlePickAvatar}
+                        onPress={() => this.props.navigation.navigate("helpPage")}
                         style={styles.button}
                     >
                         <Text>Help</Text>

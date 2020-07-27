@@ -54,7 +54,7 @@ class Fire {
     } */
 
     addItem = async ({ name, type, location, quantity, description, owner, localUri, expiry, ownerEmail }) => {
-        const remoteUri = await this.uploadPhotoAsync(localUri, `photos/${this.uid}/${Date.now()}.jpg`);
+        const remoteUri = await this.uploadPhotoAsync(localUri, `photos/${this.uid}/${Date.now()}.jpg`).then();
         var expiryChanged = (expiry === 0 ? "" : new Date(expiry));
 
         return new Promise((res, rej) => {
@@ -78,7 +78,7 @@ class Fire {
                     console.log("reset uid");
                     //console.log(firebase.firestore.Timestamp(expiry))
                     res(ref);
-                })
+                }, (err) => {console.log('error in adding (Fire.shared)'); rej(err)})
                 .catch(error => {
                     rej(error);
                 });

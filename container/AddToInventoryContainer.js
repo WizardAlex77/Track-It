@@ -3,7 +3,7 @@ import {
     StyleSheet,
     View,
     Text,
-    Keyboard, ScrollView, SafeAreaView, TouchableOpacity, Image, Alert, ActivityIndicator
+    Keyboard, ScrollView, SafeAreaView, TouchableOpacity, Image, Alert, ActivityIndicator, KeyboardAvoidingView
 } from "react-native";
 import firebaseDb from "../firebaseDb";
 import Button from "../component/Button";
@@ -99,8 +99,7 @@ class AddToInventoryContainer extends Component {
                 owner: firebaseDb.auth().currentUser.displayName,
                 ownerEmail: firebaseDb.auth().currentUser.email,
                 localUri: this.state.image
-            })
-                .then(ref => {
+            }).then((ref) => {
                     this.setState({
                         name: "",
                         type: "",
@@ -114,9 +113,11 @@ class AddToInventoryContainer extends Component {
                     this.props.watchItemExpiry();
                     this.props.navigation.navigate("Home");
                     this.setState({loading: false})
-                })
+                }, (err) => {console.log('error adding item'); Alert.alert("Error in adding item", "Please try again"); this.setState({loading: false})})
         }
     }
+
+
 
     displayDummy = () => {
         return <Ionicons name='ios-add' size={70} color="#FFF" />
@@ -154,7 +155,7 @@ class AddToInventoryContainer extends Component {
             return (
                 <SafeAreaView>
                     <ScrollView>
-                        <View style={styles.container}>
+                        <KeyboardAvoidingView  behavior="padding" style={styles.container}>
 
                             <Image
                                 style={styles.background1}
@@ -214,7 +215,7 @@ class AddToInventoryContainer extends Component {
                                     <Text>Add Item</Text>
                                 </Button>
                             </View>
-                        </View>
+                        </KeyboardAvoidingView>
                     </ScrollView>
                 </SafeAreaView>
             )
