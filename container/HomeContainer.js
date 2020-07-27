@@ -145,7 +145,16 @@ class Home extends Component {
   render() {
     const { isLoading } = this.state;
     if (isLoading) {
-      return <ActivityIndicator />;
+      return (
+          <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 70
+          }}>
+            <ActivityIndicator />
+          </View>
+      )
     } else {
       return (
         <View style={styles.container}>

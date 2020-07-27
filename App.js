@@ -5,7 +5,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { decode, encode } from "base-64";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
-import AddItemContainer from "./container/AddItemContainer";
 import SettingsContainer from "./container/SettingsContainer";
 import WelcomeContainer from "./container/WelcomeContainer";
 import HomeContainer from "./container/HomeContainer";
@@ -14,7 +13,6 @@ import LogInContainer from "./container/LogInContainer";
 import firebaseDb from "./firebaseDb";
 import InventoryContainer from "./container/InventoryContainer";
 import AddToInventoryContainer from "./container/AddToInventoryContainer"
-import AddToWishListContainer from "./container/AddToWishListContainer"
 import { Provider } from 'react-redux';
 import { store } from './app-redux';
 import ExpiringItemsContainer from "./container/ExpiringItemsContainer";
@@ -35,7 +33,6 @@ firebaseDb.firestore().settings({ experimentalForceLongPolling: true });
 const AccountStack = createStackNavigator();
 const MenuTab = createBottomTabNavigator();
 const SettingStack = createStackNavigator();
-const AddItemStack = createStackNavigator();
 
 export default function App() {
     const createSettingStack = () => {
@@ -65,28 +62,6 @@ export default function App() {
                     component={memberListContainer}
                 />
             </SettingStack.Navigator>
-        )
-    }
-
-    const createAddItemStack = () => {
-        return (
-            <AddItemStack.Navigator
-                initialRouteName="Add Item Selection"
-                headerMode="none"
-            >
-                <AddItemStack.Screen
-                    name="Add Item Selection"
-                    component={AddItemContainer}
-                />
-                <AddItemStack.Screen
-                    name="Add Item to Inventory"
-                    component={AddToInventoryContainer}
-                />
-                <AddItemStack.Screen
-                    name="Add Item to WishList"
-                    component={AddToWishListContainer}
-                />
-            </AddItemStack.Navigator>
         )
     }
 

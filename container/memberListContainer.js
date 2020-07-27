@@ -122,7 +122,16 @@ class memberListContainer extends Component {
     render() {
         const { loading} = this.state;
         if (loading) {
-            return <ActivityIndicator/>;
+            return (
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: 70
+                }}>
+                    <ActivityIndicator />
+                </View>
+            )
         } else {
             return (
             <View style={styles.container}>
@@ -205,18 +214,16 @@ const styles = StyleSheet.create({
     },
     background1: {
         position: 'absolute',
-        width: 350,
-        height: 500,
-        top: -100,
-        left: -10,
+        width: "100%",
+        height: "100%",
+        top: -150,
         resizeMode: "contain",
     },
     background2: {
         position: 'absolute',
-        width: 350,
-        height: 500,
-        top: -100,
-        left: -30,
+        width: "100%",
+        height: "100%",
+        top: -150,
         resizeMode: "contain",
     },
     back: {

@@ -218,9 +218,9 @@ const styles = StyleSheet.create({
   },
   background: {
     position: 'absolute',
-    width: 350,
-    height: 500,
-    top: -160,
+    width: "100%",
+    height: "100%",
+    top: -170,
     resizeMode: "contain",
   }
 })

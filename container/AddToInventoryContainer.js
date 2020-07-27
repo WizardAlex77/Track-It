@@ -3,7 +3,7 @@ import {
     StyleSheet,
     View,
     Text,
-    Keyboard, ScrollView, SafeAreaView, TouchableOpacity, Image, Alert
+    Keyboard, ScrollView, SafeAreaView, TouchableOpacity, Image, Alert, ActivityIndicator
 } from "react-native";
 import firebaseDb from "../firebaseDb";
 import Button from "../component/Button";
@@ -42,6 +42,7 @@ class AddToInventoryContainer extends Component {
         expiry: null,
         description: null,
         image: null,
+        loading: false,
     };
 
     componentDidMount() {
@@ -87,6 +88,7 @@ class AddToInventoryContainer extends Component {
             Alert.alert("Quantity input is too long!", "Please make sure your quantity does not exceed 12 characters");
         }
         else {
+            this.setState({loading: true});
             Fire.shared.addItem({
                 name: this.state.name,
                 type: this.state.type,
@@ -111,6 +113,7 @@ class AddToInventoryContainer extends Component {
                     this.props.watchItemData();
                     this.props.watchItemExpiry();
                     this.props.navigation.navigate("Home");
+                    this.setState({loading: false})
                 })
         }
     }
@@ -133,101 +136,89 @@ class AddToInventoryContainer extends Component {
         console.log(time);
         this.setState({ expiry: time });
     }
-    handleAddItem = () => firebaseDb
-        .firestore()
-        .collection('items')
-        .add({
-            name: this.state.name,
-            type: this.state.type,
-            location: this.state.location,
-            quantity: this.state.quantity,
-            expiry: this.state.expiry,
-            description: this.state.description,
-            owner: firebaseDb.auth().currentUser.displayName,
-        })
-        .then(() => {
-            this.setState({
-                name: "",
-                type: "",
-                location: "",
-                quantity: "",
-                expiry: "",
-                description: ""
-            });
-            this.props.watchItemData();
-            this.props.watchItemExpiry();
-            this.props.navigation.navigate("Home");
-        })
-        .catch((err) => console.error(err));
 
     render() {
-        return (
-            <SafeAreaView>
-                <ScrollView>
-                    <View style={styles.container}>
+        const { loading } = this.state;
+        if (loading) {
+            return (
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: 70
+                }}>
+                    <ActivityIndicator />
+                </View>
+            )
+        } else {
+            return (
+                <SafeAreaView>
+                    <ScrollView>
+                        <View style={styles.container}>
 
-                        <Image
-                            style={styles.background1}
-                            source={require("../assets/settingBackground2.png")}
-                        />
-                        <Image
-                            style={styles.background2}
-                            source={require("../assets/settingBackground1.png")}
-                        />
+                            <Image
+                                style={styles.background1}
+                                source={require("../assets/settingBackground2.png")}
+                            />
+                            <Image
+                                style={styles.background2}
+                                source={require("../assets/settingBackground1.png")}
+                            />
 
-                        <View style={{ marginTop: 20 }}>
-                            <Text style={styles.greeting}>Add an Item!</Text>
+                            <View style={{ marginTop: 20 }}>
+                                <Text style={styles.greeting}>Add an Item!</Text>
+                            </View>
+                            <TouchableOpacity style={[styles.avatarPlaceHolder, { alignSelf: 'center' }]} onPress={this.pickImage}>
+                                {this.state.image != null && this.displayImage()}
+                                {this.state.image == null && this.displayDummy()}
+                            </TouchableOpacity>
+                            <View style={styles.form}>
+                                <FieldInput
+                                    style={{ marginTop: 20 }}
+                                    onChangeText={this.handleUpdateName}
+                                    value={this.state.name}
+                                >Name</FieldInput>
+                                <FieldInput
+                                    style={{ marginTop: 20 }}
+                                    onChangeText={this.handleUpdateType}
+                                    value={this.state.type}
+                                >Type</FieldInput>
+                                <FieldInput
+                                    style={{ marginTop: 20 }}
+                                    onChangeText={this.handleUpdateQuantity}
+                                    value={this.state.quantity}
+                                >Quantity</FieldInput>
+                                <FieldInput
+                                    style={{ marginTop: 20 }}
+                                    onChangeText={this.handleUpdateLocation}
+                                    value={this.state.location}
+                                >Location</FieldInput>
+                                <DatePicker
+                                    style={{ marginTop: 20 }}
+                                    onChange={this.handleUpdateExpiry}
+                                    clear={this.resetExpireState}
+                                    date={this.state.expiry}
+                                ></DatePicker>
+                                <FieldInput
+                                    style={{ marginTop: 20, marginBottom: 30 }}
+                                    onChangeText={this.handleUpdateDescription}
+                                    value={this.state.description}
+                                >Description (Optional)</FieldInput>
+                                <Button
+                                    style={styles.button}
+                                    onPress={() => {
+                                        Keyboard.dismiss();
+                                        this.handleAddItem2();
+                                    }}
+                                >
+                                    <Text>Add Item</Text>
+                                </Button>
+                            </View>
                         </View>
-                        <TouchableOpacity style={[styles.avatarPlaceHolder, { alignSelf: 'center' }]} onPress={this.pickImage}>
-                            {this.state.image != null && this.displayImage()}
-                            {this.state.image == null && this.displayDummy()}
-                        </TouchableOpacity>
-                        <View style={styles.form}>
-                            <FieldInput
-                                style={{ marginTop: 20 }}
-                                onChangeText={this.handleUpdateName}
-                                value={this.state.name}
-                            >Name</FieldInput>
-                            <FieldInput
-                                style={{ marginTop: 20 }}
-                                onChangeText={this.handleUpdateType}
-                                value={this.state.type}
-                            >Type</FieldInput>
-                            <FieldInput
-                                style={{ marginTop: 20 }}
-                                onChangeText={this.handleUpdateQuantity}
-                                value={this.state.quantity}
-                            >Quantity</FieldInput>
-                            <FieldInput
-                                style={{ marginTop: 20 }}
-                                onChangeText={this.handleUpdateLocation}
-                                value={this.state.location}
-                            >Location</FieldInput>
-                            <DatePicker
-                                style={{ marginTop: 20 }}
-                                onChange={this.handleUpdateExpiry}
-                                clear={this.resetExpireState}
-                                date={this.state.expiry}
-                            ></DatePicker>
-                            <FieldInput
-                                style={{ marginTop: 20, marginBottom: 30 }}
-                                onChangeText={this.handleUpdateDescription}
-                                value={this.state.description}
-                            >Description (Optional)</FieldInput>
-                            <Button
-                                style={styles.button}
-                                onPress={() => {
-                                    Keyboard.dismiss();
-                                    this.handleAddItem2();
-                                }}
-                            >
-                                <Text>Add Item</Text>
-                            </Button>
-                        </View>
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        )
+                    </ScrollView>
+                </SafeAreaView>
+            )
+        }
     }
 }
 
@@ -290,24 +281,16 @@ const styles = StyleSheet.create({
     },
     background1: {
         position: 'absolute',
-        width: 350,
-        height: 500,
-        top: -250,
-        left: -10,
+        width: "100%",
+        height: "100%",
+        top: -290,
         resizeMode: "contain",
     },
     background2: {
         position: 'absolute',
-        width: 350,
-        height: 500,
-        top: -250,
-        left: -30,
+        width: "100%",
+        height: "100%",
+        top: -290,
         resizeMode: "contain",
     },
 })
-
-/*
- <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
-                            <Icon name="ios-arrow-round-back" size={32} color="#FFF" />
-                        </TouchableOpacity>
- */
