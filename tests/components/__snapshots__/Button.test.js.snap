@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`button should match the snapshot 1`] = `
+<View
+  accessible={true}
+  focusable={false}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "backgroundColor": "#2980b9",
+      "borderRadius": 15,
+      "marginBottom": 10,
+      "opacity": 1,
+      "paddingVertical": 15,
+    }
+  }
+  testID="submit"
+>
+  <Text
+    style={
+      Object {
+        "color": "rgb(108,108,108)",
+        "fontWeight": "700",
+        "textAlign": "center",
+      }
+    }
+    testID="text"
+  >
+    abacaba
+  </Text>
+</View>
+`;

@@ -2,8 +2,8 @@ import React from 'react'
 import { TouchableOpacity, Text, StyleSheet } from 'react-native'
 
 const Button = props => (
-    <TouchableOpacity style={[styles.container, props.style]} onPress={props.onPress}>
-        <Text style={styles.buttonText}>{props.children}</Text>
+    <TouchableOpacity style={[styles.container, props.style]} onPress={props.onPress} testID={'submit'}>
+        <Text style={styles.buttonText} testID={'text'}>{props.children}</Text>
     </TouchableOpacity>
 )
 

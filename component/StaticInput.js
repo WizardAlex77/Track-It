@@ -7,16 +7,16 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 
 export const StaticInput = props => (
-    <View style={props.style}>
-        <Text style={styles.inputTitle}>{props.children}</Text>
-        <TextInput style={styles.input} autoCapitalize="none" onChangeText={props.onChangeText} value={props.value} />
+    <View style={props.style} testID={'wrapper'}>
+        <Text style={styles.inputTitle} testID={'text'}>{props.children}</Text>
+        <TextInput style={styles.input} testID={'input'} autoCapitalize="none" onChangeText={props.onChangeText} value={props.value} />
     </View>
 )
 
 export const StaticInput2 = props => (
     <View style={props.style}>
         <Text style={styles.inputTitle}>{props.children}</Text>
-        <TextInput style={styles.input2} autoCapitalize="none" keyboardType="email-address" onChangeText={props.onChangeText} value={props.value} placeholder="Type here"/>
+        <TextInput style={styles.input2} autoCapitalize="none" keyboardType="email-address" onChangeText={props.onChangeText} value={props.value} placeholder="Type here" />
     </View>
 )
 
@@ -28,9 +28,9 @@ export const StaticPasswordInput = props => (
 )
 
 export const StaticEmailInput = props => (
-    <View style={props.style}>
-        <Text style={styles.inputTitle}>{props.children}</Text>
-        <TextInput style={styles.input} autoCapitalize="none" keyboardType="email-address" onChangeText={props.onChangeText} value={props.value} />
+    <View style={props.style} testID={'wrapper'}>
+        <Text style={styles.inputTitle} testID={'text'}>{props.children}</Text>
+        <TextInput style={styles.input} testID={'input'} autoCapitalize="none" keyboardType="email-address" onChangeText={props.onChangeText} value={props.value} />
     </View>
 )
 
@@ -92,9 +92,9 @@ const styles = StyleSheet.create({
     },
     input2: {
         borderWidth: 2,
-        borderRadius: 10 ,
+        borderRadius: 10,
         borderColor: 'rgb(121,130,167)',
-        backgroundColor : "rgba(252,241,241,0.43)",
+        backgroundColor: "rgba(252,241,241,0.43)",
         textAlign: 'center',
         height: 40,
         fontSize: 15,
