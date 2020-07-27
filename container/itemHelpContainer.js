@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import {Text, View, StyleSheet, Image, TouchableOpacity, Keyboard} from "react-native";
 import {Icon} from "native-base";
-import Button from "../component/Button";
 
-export default class helpContainer extends Component {
 
+export default class itemHelpContainer extends Component {
 
     render() {
         return (
@@ -29,40 +28,42 @@ export default class helpContainer extends Component {
                     <Text
                         style={{ fontSize: 35, padding: "5%", fontWeight: "bold" }}
                     >
-                        How can we help?
+                        How to add items
                     </Text>
-                    <Image
-                        style={styles.library}
-                        source={require("../assets/library.png")}
-                    />
+                    <View style={{backgroundColor: 'rgba(255,255,255,0.38)', borderRadius: 100}}>
+                        <Text
+                            style={{ fontSize: 15, padding: "10%", paddingHorizontal: '15%', fontWeight: "normal" }}
+                        >
+                            Add items through the Add Items Page in the middle tab below!
+                        </Text>
+                    </View>
 
-
+                    <View style={{backgroundColor: 'rgba(255,255,255,0)', borderRadius: 100}}>
+                        <Text
+                            style={{ color: "rgba(47,47,47,0.47)", fontSize: 12, marginHorizontal: "20%", marginTop: 20, marginBottom: 10, fontWeight: "normal" }}
+                        >
+                            <Text style={styles.bullet}>{'\u2B24'} </Text>You will only be able to delete your own items and items that are expiring
+                        </Text>
+                        <Text
+                            style={{ color: "rgba(47,47,47,0.47)", fontSize: 12, marginHorizontal: "20%", marginBottom: 10, fontWeight: "normal" }}
+                        >
+                            <Text style={styles.bullet}>{'\u2B24'} </Text>Upon leaving a household that is not yours, all your items will be removed
+                        </Text>
+                        <Text
+                            style={{ color: "rgba(47,47,47,0.47)", fontSize: 12, marginHorizontal: "20%", marginBottom: 10, fontWeight: "normal" }}
+                        >
+                            <Text style={styles.bullet}>{'\u2B24'} </Text>To edit an item, please delete and re-add the item
+                        </Text>
+                        <Text
+                            style={{ color: "rgba(47,47,47,0.47)", fontSize: 12, marginHorizontal: "20%", marginBottom: 10, fontWeight: "normal" }}
+                        >
+                            <Text style={styles.bullet}>{'\u2B24'} </Text>Items can be searched for using any information related to the item
+                        </Text>
+                    </View>
                 </View>
-
-                <View style={styles.form}>
-                    <Button
-                        onPress={() => this.props.navigation.navigate("itemHelp")}
-                        style={styles.button}
-                    >
-                        <Text>Items Help</Text>
-                    </Button>
-
-                    <Button
-                        onPress={() => {
-                            this.props.navigation.navigate("householdHelp")
-                        }}
-                        style={styles.button}
-                    >
-                        <Text>Household Help</Text>
-                    </Button>
-
-                </View>
-
-
             </View>
         )
     }
-
 }
 
 const styles = StyleSheet.create({
@@ -120,10 +121,9 @@ const styles = StyleSheet.create({
         top: -150,
         resizeMode: "contain",
     },
-    library: {
-        resizeMode: "contain",
-        width: 300,
-        height: 300,
-        top: -60
+    bullet: {
+        fontSize: 8,
+        marginLeft: 10,
+        fontWeight: "normal"
     }
 })

@@ -21,6 +21,8 @@ import joinRequestsContainer from "./container/joinRequestsContainer";
 import householdSettingsContainer from "./container/householdSettingsContainer";
 import memberListContainer from "./container/memberListContainer";
 import helpContainer from "./container/helpContainer";
+import itemHelpContainer from "./container/itemHelpContainer";
+import householdHelpContainer from "./container/householdHelpContainer";
 
 if (!global.btoa) {
   global.btoa = encode;
@@ -65,6 +67,14 @@ export default function App() {
                 <SettingStack.Screen
                     name="helpPage"
                     component={helpContainer}
+                />
+                <SettingStack.Screen
+                    name="itemHelp"
+                    component={itemHelpContainer}
+                />
+                <SettingStack.Screen
+                    name="householdHelp"
+                    component={householdHelpContainer}
                 />
             </SettingStack.Navigator>
         )

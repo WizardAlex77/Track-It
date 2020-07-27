@@ -153,7 +153,7 @@ class AddToInventoryContainer extends Component {
             )
         } else {
             return (
-                <SafeAreaView>
+
                     <ScrollView>
                         <KeyboardAvoidingView  behavior="padding" style={styles.container}>
 
@@ -217,7 +217,7 @@ class AddToInventoryContainer extends Component {
                             </View>
                         </KeyboardAvoidingView>
                     </ScrollView>
-                </SafeAreaView>
+
             )
         }
     }
